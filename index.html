@@ -1,943 +1,1121 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veterinarios por Venezuela — Red de emergencia animal</title>
+<meta name="description" content="Plataforma de emergencia coordinada por médicos veterinarios para reunir mascotas perdidas, coordinar refugios y facilitar adopciones durante desastres naturales en Venezuela.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
+:root{
+  --teal:#0F766E; --teal-dk:#0c5f59; --coral:#F26B4E; --coral-dk:#e0573b;
+  --lost:#DC4A4A; --found:#2F9E63; --adopt:#7E5BD0;
+  --bg:#FAF7F2; --ink:#1C2B2A; --head:#163b37; --muted:#6b756f; --soft:#8a938d;
+  --border:#EDE7DC; --line:#F0EAE0; --field:#FCFAF6; --field-br:#E6DFD3;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Source Sans 3',system-ui,sans-serif;background:#FAF7F2;color:#1C2B2A;-webkit-font-smoothing:antialiased;line-height:1.5}
-button{font-family:inherit;cursor:pointer}
+body{font-family:'Source Sans 3',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
 input,select,textarea{font-family:inherit}
+a{color:inherit}
 ::-webkit-scrollbar{height:9px;width:9px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#d9d2c7;border-radius:8px}
-.vpv-strip::-webkit-scrollbar{height:6px}
-@keyframes vpvUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes vpvOverlay{from{opacity:0}to{opacity:1}}
-@keyframes vpvSheet{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
-@keyframes vpvPaw{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(-6deg)}}
-@keyframes vpvPop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-</style>
-</helmet>
+.wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes overlay{from{opacity:0}to{opacity:1}}
+@keyframes sheet{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes paw{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(-6deg)}}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 
-<div style="min-height:100vh;display:flex;flex-direction:column">
+/* ---- emergency bar ---- */
+.embar{background:var(--ink);color:#F6F1E8;font-size:13.5px;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center}
+.embar strong{font-weight:700;color:#F8B24A}
+.embar .lnk{color:#6FD6C9;font-weight:600;border-bottom:1px solid rgba(111,214,201,.4);cursor:pointer}
+
+/* ---- header ---- */
+header{position:sticky;top:0;z-index:40;background:rgba(250,247,242,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.hrow{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:13px 0}
+.brand{display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0}
+.logo{position:relative;width:40px;height:40px;border-radius:11px;background:var(--teal);box-shadow:0 3px 10px rgba(15,118,110,.32);flex-shrink:0}
+.logo .v{position:absolute;top:50%;left:50%;width:4.5px;height:19px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.logo .h{position:absolute;top:50%;left:50%;width:19px;height:4.5px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.logo .paw{position:absolute;bottom:-4px;right:-5px;font-size:15px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+.brand-name{font-weight:700;font-size:15.5px;color:var(--head);line-height:1.05}
+.brand-name span{color:var(--teal)}
+.brand-sub{display:flex;align-items:center;gap:6px;margin-top:3px}
+.flag{display:flex;height:3px;width:34px;border-radius:2px;overflow:hidden}
+.flag b{flex:1}.flag b:nth-child(1){background:#F8C13A}.flag b:nth-child(2){background:#1f55a8}.flag b:nth-child(3){background:#cf2b2b}
+.brand-tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#9aa49f;font-weight:600}
+nav{display:flex;align-items:center;gap:3px;margin-left:auto;flex-wrap:wrap}
+.nav-link{color:var(--muted);font-size:14px;font-weight:600;padding:8px 13px;border-radius:9px;transition:background .15s,color .15s}
+.nav-link:hover{background:#EEE8DD}
+.nav-link.active{color:var(--teal);font-weight:700;background:#E9F2F0}
+.hbtns{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.btn-vet{border:1.5px solid #cfddd9;color:var(--teal);font-weight:600;font-size:13.5px;padding:8px 13px;border-radius:9px;display:flex;align-items:center;gap:6px;transition:.15s}
+.btn-vet:hover{background:#ecf4f2;border-color:var(--teal)}
+.btn-report{background:var(--coral);color:#fff;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:9px;box-shadow:0 3px 12px rgba(242,107,78,.32);transition:.15s}
+.btn-report:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(242,107,78,.4)}
+.menu-toggle{display:none;width:42px;height:40px;border-radius:9px;border:1.5px solid #cfddd9;color:var(--teal);font-size:20px}
+
+/* ---- views ---- */
+.view{display:none}
+.view.active{display:block;animation:up .4s ease both}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%}
+.page-pad{padding:40px 0 90px}
+.page-h1{font-weight:800;font-size:34px;color:var(--head);letter-spacing:-.02em}
+.lead{color:var(--muted);font-size:16px;margin-top:6px;max-width:620px;text-wrap:pretty}
+
+/* ---- hero ---- */
+.hero{position:relative;overflow:hidden;background:radial-gradient(120% 130% at 85% 0%,#0F766E 0%,#0c5f59 55%,#0a4f4a 100%)}
+.hero .pawbg1{position:absolute;top:8%;left:-10px;font-size:120px;opacity:.07;color:#fff;animation:paw 6s ease-in-out infinite}
+.hero .pawbg2{position:absolute;bottom:-20px;right:6%;font-size:180px;opacity:.06;color:#fff}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:44px;align-items:center;padding:64px 0 70px;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#dff3f0;font-size:13px;font-weight:600;padding:6px 13px;border-radius:999px;margin-bottom:20px}
+.hero h1{font-weight:800;font-size:46px;line-height:1.06;letter-spacing:-.02em;color:#fff;text-wrap:balance}
+.hero p{color:#cfe7e3;font-size:18px;margin-top:18px;max-width:520px;text-wrap:pretty}
+.hero-cta{display:flex;gap:13px;margin-top:30px;flex-wrap:wrap}
+.cta-coral{background:var(--coral);color:#fff;font-weight:700;font-size:16px;padding:15px 24px;border-radius:12px;box-shadow:0 8px 24px rgba(242,107,78,.4);display:flex;align-items:center;gap:9px;transition:.15s}
+.cta-coral:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(242,107,78,.5)}
+.cta-ghost{border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);color:#fff;font-weight:700;font-size:16px;padding:15px 24px;border-radius:12px;display:flex;align-items:center;gap:9px;transition:.15s}
+.cta-ghost:hover{background:rgba(255,255,255,.18)}
+.hero-stats{display:flex;gap:30px;margin-top:36px;flex-wrap:wrap}
+.hero-stats .n{font-weight:700;font-size:26px;color:#fff;font-family:'Sora'}
+.hero-stats .l{color:#9fd0c9;font-size:13px;font-weight:500}
+.hero-card{position:relative}
+.hero-photo{background:rgba(255,255,255,.96);border-radius:20px;padding:8px;box-shadow:0 30px 70px rgba(7,52,48,.45);transform:rotate(1.5deg)}
+.hero-photo .ph{border-radius:14px;height:300px;background:linear-gradient(140deg,#E3F0EE,#cfe6e2 60%,#FBE7E0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.hero-photo .ph span{font-size:74px;opacity:.5}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.05em;color:rgba(28,43,42,.5)}
+.hero-float{position:absolute;bottom:-18px;left:-18px;background:#fff;border-radius:14px;padding:13px 16px;box-shadow:0 12px 30px rgba(7,52,48,.22);display:flex;align-items:center;gap:11px}
+.hero-float .ic{width:38px;height:38px;border-radius:10px;background:#e7f5ef;display:flex;align-items:center;justify-content:center;font-size:19px}
+
+/* ---- sections ---- */
+.section{padding:56px 0 10px}
+.sec-head .eyebrow{color:var(--coral)}
+.sec-head h2{font-weight:700;font-size:30px;color:var(--head);margin-top:6px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px;margin-top:26px}
+.feat{background:#fff;border:1px solid var(--border);border-radius:18px;padding:24px 22px;cursor:pointer;transition:.18s;position:relative;overflow:hidden}
+.feat:hover{transform:translateY(-5px);box-shadow:0 18px 36px rgba(28,43,42,.1);border-color:#e0d8c9}
+.feat .paww{position:absolute;top:-14px;right:-8px;font-size:64px;opacity:.06}
+.feat .ic{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:23px;margin-bottom:16px}
+.feat h3{font-weight:700;font-size:18px;color:var(--head)}
+.feat p{color:var(--muted);font-size:14.5px;margin-top:7px;text-wrap:pretty}
+.feat .go{margin-top:15px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+
+.strip-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.strip-head h2{font-weight:700;font-size:24px;color:var(--head);display:flex;align-items:center;gap:10px}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--lost);box-shadow:0 0 0 4px rgba(220,74,74,.18)}
+.btn-out{border:1.5px solid #d9e3df;background:#fff;color:var(--teal);font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:9px;transition:.15s}
+.btn-out:hover{background:#f0f6f4}
+.strip{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 16px;scroll-snap-type:x mandatory}
+.strip::-webkit-scrollbar{height:6px}
+.mini{flex:0 0 230px;scroll-snap-align:start;background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:.18s}
+.mini:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(28,43,42,.12)}
+.mini .photo{position:relative;height:140px;display:flex;align-items:center;justify-content:center}
+.mini .photo .pw{font-size:46px;opacity:.4}
+.mini .body{padding:13px 14px}
+.mini .name{font-weight:700;font-size:16px;color:var(--head)}
+
+.howbg{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px}
+.how{max-width:1080px;margin:0 auto;padding:60px 22px;text-align:center}
+.how .eyebrow{color:var(--coral)}
+.how h2{font-weight:700;font-size:30px;color:var(--head);margin-top:8px}
+.how>p{color:var(--muted);font-size:16px;margin-top:10px;max-width:540px;margin:10px auto 0}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:40px}
+.step{padding:28px 22px;border:1px solid var(--border);border-radius:18px;background:#FCFAF6;text-align:left}
+.step .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.step .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.step .num{font-weight:800;font-size:34px;color:#e7ddcb;font-family:'Sora'}
+.step h3{font-weight:700;font-size:18px;color:var(--head)}
+.step p{color:var(--muted);font-size:14.5px;margin-top:7px;text-wrap:pretty}
+
+.band{background:linear-gradient(120deg,#F26B4E,#e0573b);border-radius:22px;padding:46px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(242,107,78,.28);margin:56px 0}
+.band .paww{position:absolute;bottom:-30px;right:30px;font-size:160px;opacity:.12;color:#fff}
+.band h2{font-weight:700;font-size:28px;color:#fff;position:relative}
+.band p{color:#ffe5dd;font-size:16px;margin-top:8px;max-width:480px;position:relative}
+.band button{position:relative;background:#fff;color:var(--coral-dk);font-weight:700;font-size:16px;padding:15px 26px;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.18);transition:.15s}
+.band button:hover{transform:translateY(-2px)}
+
+/* ---- filter bar ---- */
+.filterbar{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-top:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(28,43,42,.04)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--field-br);background:#fff;color:var(--muted);font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;transition:.15s}
+.chip:hover{background:var(--field)}
+.chip.active{color:#fff}
+.chip.active.teal{background:var(--teal);border-color:var(--teal)}
+.divider{width:1px;height:24px;background:#ECE5DA}
+.search{position:relative;flex:1;min-width:180px}
+.search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5;font-style:normal}
+.search input{width:100%;border:1.5px solid var(--field-br);background:var(--field);border-radius:10px;padding:9px 12px 9px 34px;font-size:14px;color:var(--ink);outline:none}
+.fsel{border:1.5px solid var(--field-br);background:var(--field);border-radius:10px;padding:9px 12px;font-size:14px;color:#5f6e6b;outline:none}
+.count{margin-left:auto;font-size:13.5px;color:#9aa49f;font-weight:600}
+
+/* ---- pet card grid ---- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;margin-top:22px}
+.pet{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:.18s}
+.pet:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(28,43,42,.12)}
+.pet .photo{position:relative;height:182px;display:flex;align-items:center;justify-content:center}
+.pet .photo .pw{font-size:54px;opacity:.4}
+.badge{position:absolute;top:11px;left:11px;color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.05em;padding:5px 11px;border-radius:999px;display:flex;align-items:center;gap:5px}
+.badge.lost{background:var(--lost);box-shadow:0 2px 8px rgba(220,74,74,.4)}
+.badge.found{background:var(--found);box-shadow:0 2px 8px rgba(47,158,99,.4)}
+.statuschip{position:absolute;bottom:9px;left:11px;background:rgba(255,255,255,.92);color:#33403c;font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:5px}
+.pet .body{padding:15px 16px}
+.pet .title{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.pet .pname{font-weight:700;font-size:18px;color:var(--head)}
+.pet .sp{font-size:12px;color:#9aa49f}
+.pet .breed{font-size:13px;color:var(--soft)}
+.meta{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-top:10px}
+.meta.t{color:#9aa49f;margin-top:3px}
+.actions{display:flex;gap:8px;margin-top:14px}
+.act{flex:1;color:#fff;font-weight:600;font-size:13px;padding:9px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s}
+.act.call{background:var(--teal)}.act.call:hover{background:var(--teal-dk)}
+.act.wa{background:#25864e}.act.wa:hover{background:#1f6f41}
+.share{width:100%;border:1.5px solid var(--field-br);background:#fff;color:var(--muted);font-weight:600;font-size:13px;padding:8px;border-radius:9px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.share:hover{background:var(--field);border-color:#d9d2c7}
+
+/* ---- shelters ---- */
+.map{margin-top:24px;border:1px solid var(--border);border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#eaf1ef,#e3ece9);position:relative;height:240px;display:flex;align-items:center;justify-content:center}
+.map .gridlines{position:absolute;inset:0;background-image:linear-gradient(rgba(15,118,110,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(15,118,110,.06) 1px,transparent 1px);background-size:34px 34px}
+.map .pin{position:absolute;font-size:26px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2))}
+.map .lbl{position:relative;text-align:center;background:rgba(255,255,255,.85);padding:14px 20px;border-radius:12px;backdrop-filter:blur(2px)}
+.shelters{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;margin-top:22px}
+.shelter{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:.18s}
+.shelter:hover{box-shadow:0 14px 30px rgba(28,43,42,.1)}
+.shelter .top{display:flex;align-items:start;justify-content:space-between;gap:10px}
+.shelter h3{font-weight:700;font-size:19px;color:var(--head)}
+.shelter .addr{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted);margin-top:5px}
+.spill{font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.spill.open{background:#e7f5ef;color:#1b7a55}
+.spill.full{background:#fdecec;color:var(--lost)}
+.bars{margin-top:18px;display:flex;flex-direction:column;gap:13px}
+.bar .brow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.bar .brow b{font-weight:600;color:#33403c}
+.bar .brow span{color:var(--soft)}
+.track{height:9px;background:var(--border);border-radius:999px;overflow:hidden}
+.fill{height:100%;border-radius:999px;transition:width .6s ease}
+.svchips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.sv{background:#F0F7F5;color:var(--teal);font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:8px;display:flex;align-items:center;gap:5px}
+.shelter .detail{width:100%;border:1.5px solid #cfddd9;background:#fff;color:var(--teal);font-weight:600;font-size:14px;padding:10px;border-radius:10px;margin-top:18px;transition:.15s}
+.shelter .detail:hover{background:#f0f6f4}
+.btn-teal{background:var(--teal);color:#fff;font-weight:600;font-size:14.5px;padding:12px 18px;border-radius:11px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(15,118,110,.28);transition:.15s}
+.btn-teal:hover{transform:translateY(-2px)}
+
+/* ---- adoptions ---- */
+.tabs{display:inline-flex;background:#F0EAE0;border-radius:12px;padding:4px;margin-top:24px;gap:4px}
+.tab{color:#7a857f;font-weight:600;font-size:14.5px;padding:10px 20px;border-radius:9px;transition:.18s}
+.tab.active{background:#fff;color:var(--adopt);box-shadow:0 2px 8px rgba(28,43,42,.1)}
+.adopt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:18px;margin-top:24px}
+.acard{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:.18s}
+.acard:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(28,43,42,.12)}
+.acard .photo{position:relative;height:190px;display:flex;align-items:center;justify-content:center}
+.acard .photo .pw{font-size:56px;opacity:.4}
+.sbadge{position:absolute;top:11px;left:11px;color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 10px;border-radius:999px}
+.acard .body{padding:16px}
+.acard .title{display:flex;align-items:baseline;justify-content:space-between}
+.acard .pname{font-weight:700;font-size:19px;color:var(--head)}
+.acard .age{font-size:12.5px;color:#9aa49f}
+.tags{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px}
+.tag.size{background:#F4F0E8;color:var(--muted)}
+.vetseal{display:flex;align-items:center;gap:7px;margin-top:13px;background:#e7f5ef;border:1px solid #cfe9df;border-radius:9px;padding:8px 10px}
+.vetseal span{font-size:12.5px;font-weight:600;color:#1b7a55}
+.btn-adopt{width:100%;background:var(--adopt);color:#fff;font-weight:600;font-size:14px;padding:11px;border-radius:10px;margin-top:13px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 5px 14px rgba(126,91,208,.3);transition:.15s}
+.btn-adopt:hover{transform:translateY(-1px)}
+.apply-grid{margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:start}
+.form-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:26px;box-shadow:0 1px 2px rgba(28,43,42,.04)}
+.form-card h3{font-weight:700;font-size:21px;color:var(--head)}
+.form-card>p{color:var(--muted);font-size:14.5px;margin-top:6px}
+.fcol{display:flex;flex-direction:column;gap:13px;margin-top:20px}
+.frow{display:flex;gap:11px;flex-wrap:wrap}
+.frow>div{flex:1;min-width:120px}
+label{font-size:13px;font-weight:600;color:#33403c}
+.inp{width:100%;margin-top:5px;border:1.5px solid var(--field-br);background:var(--field);border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none}
+.inp:focus{border-color:var(--teal)}
+textarea.inp{min-height:90px;resize:vertical}
+.submit-adopt{background:var(--adopt);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;box-shadow:0 6px 16px rgba(126,91,208,.3)}
+.aside-card{background:#f6f1fb;border:1px solid #e7daf6;border-radius:16px;padding:22px}
+.aside-card h4{font-weight:700;font-size:16px;color:#5a3fa3;display:flex;align-items:center;gap:8px}
+.proc{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.proc .row{display:flex;gap:12px}
+.proc .n{width:28px;height:28px;border-radius:8px;background:var(--adopt);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.proc b{font-weight:700;font-size:14px;color:#33403c}
+.proc small{font-size:13px;color:var(--muted)}
+.guarantee{background:#e7f5ef;border:1px solid #cfe9df;border-radius:16px;padding:20px;display:flex;gap:12px;align-items:start;margin-top:14px}
+.guarantee b{font-weight:700;font-size:14.5px;color:#1b7a55}
+.guarantee small{font-size:13px;color:#3d7d63;display:block;margin-top:3px}
+
+/* ---- about ---- */
+.about-hero{max-width:900px;margin:0 auto;padding:56px 22px 30px;text-align:center}
+.about-hero .eyebrow{color:var(--teal)}
+.about-hero h1{font-weight:800;font-size:38px;color:var(--head);margin-top:10px;text-wrap:balance}
+.about-hero p{color:#566159;font-size:18px;margin-top:16px;text-wrap:pretty}
+.values{max-width:1080px;margin:0 auto;padding:10px 22px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.value{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px}
+.value .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.value h3{font-weight:700;font-size:17px;color:var(--head)}
+.value p{color:var(--muted);font-size:14.5px;margin-top:6px;text-wrap:pretty}
+.statband{max-width:1080px;margin:30px auto 0;padding:0 22px}
+.statband .in{background:var(--teal);border-radius:22px;padding:44px 36px;position:relative;overflow:hidden}
+.statband .paww{position:absolute;bottom:-30px;right:20px;font-size:150px;opacity:.08;color:#fff}
+.statband .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:24px;position:relative;text-align:center}
+.statband .n{font-weight:800;font-size:36px;color:#fff;font-family:'Sora'}
+.statband .l{color:#a9d8d1;font-size:14px;font-weight:500;margin-top:2px}
+.join{max-width:900px;margin:0 auto;padding:46px 22px 60px;text-align:center}
+.join h2{font-weight:700;font-size:26px;color:var(--head)}
+.join p{color:var(--muted);font-size:16px;margin-top:8px}
+.join .btns{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.join .b1{background:var(--coral);color:#fff;font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(242,107,78,.32);transition:.15s}
+.join .b1:hover{transform:translateY(-2px)}
+.join .b2{border:1.5px solid #cfddd9;background:#fff;color:var(--teal);font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px;transition:.15s}
+.join .b2:hover{background:#f0f6f4}
+
+/* ---- vet dashboard ---- */
+.vetlayout{display:grid;grid-template-columns:230px 1fr;gap:24px;align-items:start;padding:28px 0 80px}
+.sidebar{background:var(--head);border-radius:18px;padding:20px 14px;position:sticky;top:88px}
+.sb-user{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-user .av{width:36px;height:36px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:17px}
+.sb-user b{color:#fff;font-weight:700;font-size:13.5px;font-family:'Sora'}
+.sb-user small{color:#7fb8b0;font-size:11.5px;display:block}
+.sb-menu{display:flex;flex-direction:column;gap:3px;margin-top:14px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;font-size:13.5px;font-weight:500;color:#a9d8d1;cursor:pointer}
+.sb-item:hover{background:rgba(255,255,255,.06)}
+.sb-item.active{background:var(--teal);color:#fff;font-weight:700}
+.sb-item .b{margin-left:auto;background:rgba(255,255,255,.18);font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px}
+.sb-exit{width:100%;margin-top:18px;border:1px solid rgba(255,255,255,.16);color:#a9d8d1;font-weight:600;font-size:13px;padding:9px;border-radius:9px;transition:.15s}
+.sb-exit:hover{background:rgba(255,255,255,.06)}
+.vmain-head{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.vmain-head h1{font-weight:800;font-size:27px;color:var(--head)}
+.vmain-head p{color:#8a938d;font-size:14.5px;margin-top:2px}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(28,43,42,.04)}
+.stat .r{display:flex;align-items:center;justify-content:space-between}
+.stat .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.stat .delta{font-size:12px;font-weight:700}
+.stat .n{font-weight:800;font-size:30px;color:var(--head);margin-top:12px}
+.stat .l{color:#8a938d;font-size:13.5px;font-weight:500}
+.panel{background:#fff;border:1px solid var(--border);border-radius:18px;margin-top:20px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.panel-head h3{font-weight:700;font-size:17px;color:var(--head)}
+.pill-pending{background:#fdeee9;color:var(--coral);font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px}
+.table-scroll{overflow-x:auto}
+.table{min-width:680px}
+.trow{display:grid;grid-template-columns:1.4fr 1fr .9fr 1fr 1.5fr;gap:12px;padding:14px 22px;border-top:1px solid #F4EFE7;align-items:center}
+.thead{padding:11px 22px;background:#FCFAF6;font-size:12px;font-weight:700;color:#9aa49f;letter-spacing:.04em;text-transform:uppercase;border-top:none}
+.trow .who{display:flex;align-items:center;gap:10px}
+.trow .av{width:34px;height:34px;border-radius:50%;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trow .who b{font-weight:600;font-size:14px;color:#33403c}
+.trow .who small{font-size:12px;color:#9aa49f;display:block}
+.trow .animal{font-size:14px;color:#33403c;font-weight:600}
+.trow .date{font-size:13.5px;color:var(--soft)}
+.stpill{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap;display:inline-block}
+.trow .acts{display:flex;gap:6px;justify-content:flex-end}
+.bt-approve{background:var(--found);color:#fff;font-weight:600;font-size:12.5px;padding:7px 11px;border-radius:8px}
+.bt-approve:hover{background:#27824f}
+.bt-reject{border:1.5px solid #f0c9c9;background:#fff;color:var(--lost);font-weight:600;font-size:12.5px;padding:7px 11px;border-radius:8px}
+.bt-reject:hover{background:#fdf2f2}
+.bt-info{border:1.5px solid var(--field-br);background:#fff;color:var(--muted);font-weight:600;font-size:12.5px;padding:7px 10px;border-radius:8px}
+.bt-info:hover{background:var(--field)}
+.resolved{font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
+.animals{background:#fff;border:1px solid var(--border);border-radius:18px;margin-top:20px;padding:20px 22px;box-shadow:0 1px 2px rgba(28,43,42,.04)}
+.animals .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.animals .h h3{font-weight:700;font-size:17px;color:var(--head)}
+.aglist{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:13px}
+.aitem{border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;align-items:center;gap:11px}
+.aitem .av{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.aitem b{font-weight:700;font-size:14px;color:#33403c}
+.aitem small{font-size:12px;color:#9aa49f;display:block}
+.aitem .st{display:inline-block;margin-top:4px;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px}
+
+/* ---- footer ---- */
+footer{background:#10312d;color:#cfe0db;margin-top:auto}
+.foot{padding:50px 22px 24px;max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:34px}
+.foot .blogo{display:flex;align-items:center;gap:11px}
+.foot .blogo .lg{position:relative;width:38px;height:38px;border-radius:10px;background:var(--teal)}
+.foot .blogo .lg .v{position:absolute;top:50%;left:50%;width:4px;height:18px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.foot .blogo .lg .h{position:absolute;top:50%;left:50%;width:18px;height:4px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.foot .blogo b{font-weight:700;font-size:15px;color:#fff;line-height:1.1;font-family:'Sora'}
+.foot .flag{height:4px;width:60px;margin-top:14px}
+.foot .desc{color:#86a59f;font-size:13.5px;margin-top:14px;max-width:260px}
+.foot h4{font-weight:700;font-size:14px;color:#fff;margin-bottom:13px}
+.flinks{display:flex;flex-direction:column;gap:9px}
+.flinks span{font-size:14px;color:#a9c4be;cursor:pointer;transition:.15s}
+.flinks span:hover{color:#fff}
+.fcontact{display:flex;flex-direction:column;gap:9px;font-size:14px;color:#a9c4be}
+.socials{display:flex;gap:9px;margin-top:6px}
+.socials span{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+.socials span:hover{background:rgba(255,255,255,.16)}
+.wa-emerg{background:#25D366;color:#0a3a1c;font-weight:700;font-size:14.5px;padding:12px 16px;border-radius:11px;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;box-shadow:0 6px 16px rgba(37,211,102,.3);transition:.15s}
+.wa-emerg:hover{transform:translateY(-2px)}
+.foot-bot{border-top:1px solid rgba(255,255,255,.09)}
+.foot-bot .in{max-width:1240px;margin:0 auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12.5px;color:#6f8d87}
+
+/* ---- FAB ---- */
+.fab{position:fixed;bottom:26px;right:26px;z-index:45;background:var(--coral);color:#fff;font-weight:700;font-size:15px;padding:15px 22px;border-radius:999px;box-shadow:0 10px 30px rgba(242,107,78,.45);display:none;align-items:center;gap:9px;transition:.15s}
+.fab.show{display:flex}
+.fab:hover{transform:translateY(-3px) scale(1.03)}
+
+/* ---- modal ---- */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(16,49,45,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex;animation:overlay .2s ease both}
+.modal{background:var(--bg);border-radius:22px;width:100%;max-width:620px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 90px rgba(7,40,36,.5);animation:sheet .28s cubic-bezier(.2,.8,.2,1) both}
+.modal-head{padding:20px 24px 0;flex-shrink:0}
+.modal-head .top{display:flex;align-items:center;justify-content:space-between}
+.modal-head .ti{display:flex;align-items:center;gap:10px}
+.modal-head .ic{width:34px;height:34px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:16px}
+.modal-head h3{font-weight:700;font-size:18px;color:var(--head)}
+.x{width:34px;height:34px;border-radius:9px;background:var(--border);color:var(--muted);font-size:17px;display:flex;align-items:center;justify-content:center}
+.x:hover{background:#e2dace}
+.progress-wrap{margin-top:18px}
+.steplabels{display:flex;justify-content:space-between;margin-bottom:8px}
+.steplabels b,.slabel{flex:1;text-align:center;font-size:11.5px;font-weight:700;color:#bcb6aa;letter-spacing:.02em;transition:color .3s}
+.slabel.done{color:var(--teal)}
+.ptrack{height:7px;background:#EAE3D8;border-radius:999px;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,#0F766E,#15a59a);border-radius:999px;width:20%;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.modal-body{padding:24px;overflow-y:auto;flex:1}
+.mstep{display:none}
+.mstep.active{display:block;animation:up .25s ease both}
+.mstep h4{font-weight:700;font-size:17px;color:var(--head);margin-bottom:4px}
+.mstep .sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.typecards{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.typecard{border:2px solid var(--border);background:#fff;border-radius:16px;padding:22px 18px;cursor:pointer;text-align:center;transition:.15s}
+.typecard .em{font-size:34px}
+.typecard b{font-weight:700;font-size:16px;color:var(--head);margin-top:8px;display:block}
+.typecard small{font-size:13px;color:var(--muted)}
+.typecard.sel-lost{border-color:var(--lost);background:#fdf3f2}
+.typecard.sel-found{border-color:var(--found);background:#f0f8f3}
+.note{border:1px dashed #cfe0da;background:#f0f7f5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;color:#3d7d63}
+.check{display:flex;align-items:center;gap:9px;font-size:13.5px;color:#566159;cursor:pointer;margin-top:2px}
+.check input{width:17px;height:17px;accent-color:var(--teal)}
+.dropzone{border:2px dashed #bcd6cf;background:#f0f7f5;border-radius:16px;padding:38px 20px;text-align:center;cursor:pointer;transition:.15s}
+.dropzone:hover,.dropzone.drag{background:#e7f2ef;border-color:var(--teal)}
+.dropzone .em{font-size:42px}
+.dropzone b{font-weight:700;font-size:16px;color:var(--head);margin-top:10px;display:block}
+.dropzone small{font-size:13.5px;color:var(--muted)}
+.thumbs{display:flex;gap:10px;margin-top:14px}
+.thumb{flex:1;height:74px;border-radius:11px;background:linear-gradient(140deg,#E3F0EE,#cfe6e2);display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.7}
+.thumb.empty{background:none;border:1.5px dashed #d9d2c7;color:#bcb6aa}
+.success{text-align:center;padding:18px 10px}
+.success .circle{width:78px;height:78px;border-radius:50%;background:#e7f5ef;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto;animation:pop .4s cubic-bezier(.2,.9,.3,1.3) both}
+.success h3{font-weight:800;font-size:23px;color:var(--head);margin-top:18px}
+.success p{color:#566159;font-size:15px;margin-top:8px;max-width:400px;margin:8px auto 0}
+.success .info{background:#fff;border:1px solid var(--border);border-radius:13px;padding:14px 18px;margin:22px auto 0;max-width:340px;display:flex;align-items:center;gap:12px;text-align:left}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff}
+.m-back{border:1.5px solid var(--field-br);background:#fff;color:#566159;font-weight:600;font-size:14.5px;padding:11px 18px;border-radius:11px}
+.m-back:hover{background:var(--field)}
+.m-count{font-size:13px;color:#9aa49f;font-weight:600}
+.m-next{background:var(--teal);color:#fff;font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:11px;box-shadow:0 5px 14px rgba(15,118,110,.3)}
+.m-next:hover{background:var(--teal-dk)}
+
+@media(max-width:860px){
+  nav{display:none;order:3;width:100%}
+  nav.open{display:flex;flex-direction:column;align-items:stretch}
+  nav.open .nav-link{text-align:left}
+  .menu-toggle{display:flex;align-items:center;justify-content:center;margin-left:auto}
+  .hbtns .btn-vet{display:none}
+  .vetlayout{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .hero h1{font-size:36px}
+}
+@media(max-width:520px){
+  .typecards{grid-template-columns:1fr}
+  .hero h1{font-size:30px}
+}
+</style>
+</head>
+<body>
 
 <!-- EMERGENCY BAR -->
-<div style="background:#1C2B2A;color:#F6F1E8;font-size:13.5px;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center">
-<span style="font-size:14px">🚨</span>
-<span><strong style="font-weight:700;color:#F8B24A">Activación de emergencia:</strong> lluvias en Aragua y Carabobo · centros de acopio abiertos</span>
-<span onClick="{{ goShelters }}" style="color:#6FD6C9;font-weight:600;border-bottom:1px solid rgba(111,214,201,.4);cursor:pointer">Ver refugios →</span>
+<div class="embar">
+  <span style="font-size:14px">🚨</span>
+  <span><strong>Activación de emergencia:</strong> lluvias en Aragua y Carabobo · centros de acopio abiertos</span>
+  <span class="lnk" data-nav="shelters">Ver refugios →</span>
 </div>
 
 <!-- HEADER -->
-<header style="position:sticky;top:0;z-index:40;background:rgba(250,247,242,.88);backdrop-filter:blur(12px);border-bottom:1px solid #ECE5DA">
-<div style="max-width:1240px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-<div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0">
-<div style="position:relative;width:40px;height:40px;border-radius:11px;background:#0F766E;box-shadow:0 3px 10px rgba(15,118,110,.32);flex-shrink:0">
-<div style="position:absolute;top:50%;left:50%;width:4.5px;height:19px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)"></div>
-<div style="position:absolute;top:50%;left:50%;width:19px;height:4.5px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)"></div>
-<span style="position:absolute;bottom:-4px;right:-5px;font-size:15px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))">🐾</span>
-</div>
-<div style="line-height:1.05">
-<div style="font-family:'Sora';font-weight:700;font-size:15.5px;color:#163b37;letter-spacing:-.01em">Veterinarios<span style="color:#0F766E"> por Venezuela</span></div>
-<div style="display:flex;align-items:center;gap:6px;margin-top:3px">
-<div style="display:flex;height:3px;width:34px;border-radius:2px;overflow:hidden"><span style="flex:1;background:#F8C13A"></span><span style="flex:1;background:#1f55a8"></span><span style="flex:1;background:#cf2b2b"></span></div>
-<span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#9aa49f;font-weight:600">Red de emergencia</span>
-</div>
-</div>
-</div>
-
-<nav style="display:flex;align-items:center;gap:3px;margin-left:auto;flex-wrap:wrap">
-<sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
-<button onClick="{{ n.go }}" style="border:none;background:{{ n.bg }};color:{{ n.color }};font-size:14px;font-weight:{{ n.weight }};padding:8px 13px;border-radius:9px;transition:background .15s,color .15s" style-hover="background:#EEE8DD">{{ n.label }}</button>
-</sc-for>
-</nav>
-
-<div style="display:flex;align-items:center;gap:9px;flex-shrink:0">
-<button onClick="{{ goVet }}" style="border:1.5px solid #cfddd9;background:transparent;color:#0F766E;font-weight:600;font-size:13.5px;padding:8px 13px;border-radius:9px;display:flex;align-items:center;gap:6px;transition:border-color .15s,background .15s" style-hover="background:#ecf4f2;border-color:#0F766E">🩺 Panel Vet</button>
-<button onClick="{{ openLostReport }}" style="border:none;background:#F26B4E;color:#fff;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:9px;box-shadow:0 3px 12px rgba(242,107,78,.32);transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-1px);box-shadow:0 6px 18px rgba(242,107,78,.4)">Reportar</button>
-</div>
-</div>
+<header>
+  <div class="wrap hrow">
+    <div class="brand" data-nav="home">
+      <div class="logo"><div class="v"></div><div class="h"></div><span class="paw">🐾</span></div>
+      <div>
+        <div class="brand-name">Veterinarios<span> por Venezuela</span></div>
+        <div class="brand-sub"><div class="flag"><b></b><b></b><b></b></div><span class="brand-tag">Red de emergencia</span></div>
+      </div>
+    </div>
+    <nav id="nav">
+      <button class="nav-link active" data-nav="home">Inicio</button>
+      <button class="nav-link" data-nav="lost">Mascotas Perdidas</button>
+      <button class="nav-link" data-nav="found">Mascotas Encontradas</button>
+      <button class="nav-link" data-nav="shelters">Refugios</button>
+      <button class="nav-link" data-nav="adopt">Adopciones</button>
+      <button class="nav-link" data-nav="about">Quiénes Somos</button>
+    </nav>
+    <div class="hbtns">
+      <button class="btn-vet" data-nav="vet">🩺 Panel Vet</button>
+      <button class="btn-report" data-report="perdida">Reportar</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú">☰</button>
+    </div>
+  </div>
 </header>
 
-<main style="flex:1">
+<main>
 
 <!-- ===================== HOME ===================== -->
-<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-<div data-screen-label="Home" style="animation:vpvUp .4s ease both">
+<section class="view active" id="view-home">
+  <div class="hero">
+    <span class="pawbg1">🐾</span><span class="pawbg2">🐾</span>
+    <div class="wrap hero-grid">
+      <div>
+        <div class="hero-badge">🩺 Coordinado por médicos veterinarios colegiados</div>
+        <h1>Ningún animal se queda atrás en la emergencia</h1>
+        <p>Reunimos mascotas perdidas con sus familias, coordinamos rescates y refugios, y facilitamos adopciones responsables durante desastres naturales en Venezuela.</p>
+        <div class="hero-cta">
+          <button class="cta-coral" data-report="perdida">📣 Reportar Mascota</button>
+          <button class="cta-ghost" data-nav="adopt">💜 Quiero Adoptar</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="n">480+</div><div class="l">Animales atendidos</div></div>
+          <div><div class="n">210</div><div class="l">Reencuentros</div></div>
+          <div><div class="n">64</div><div class="l">Veterinarios en red</div></div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-photo"><div class="ph"><span>🐾</span><span class="mono">foto · equipo veterinario en campo</span></div></div>
+        <div class="hero-float"><div class="ic">✅</div><div style="line-height:1.15"><div style="font-weight:700;font-size:14px;color:var(--head);font-family:'Sora'">Revisado por veterinario</div><div style="font-size:12px;color:#7a857f">Cada caso es verificado</div></div></div>
+      </div>
+    </div>
+  </div>
 
-<!-- HERO -->
-<section style="position:relative;overflow:hidden;background:radial-gradient(120% 130% at 85% 0%,#0F766E 0%,#0c5f59 55%,#0a4f4a 100%)">
-<span style="position:absolute;top:8%;left:-10px;font-size:120px;opacity:.07;color:#fff;animation:vpvPaw 6s ease-in-out infinite">🐾</span>
-<span style="position:absolute;bottom:-20px;right:6%;font-size:180px;opacity:.06;color:#fff">🐾</span>
-<div style="max-width:1240px;margin:0 auto;padding:64px 22px 70px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:44px;align-items:center;position:relative">
-<div>
-<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#dff3f0;font-size:13px;font-weight:600;padding:6px 13px;border-radius:999px;margin-bottom:20px">🩺 Coordinado por médicos veterinarios colegiados</div>
-<h1 style="font-family:'Sora';font-weight:800;font-size:46px;line-height:1.06;letter-spacing:-.02em;color:#fff;text-wrap:balance">Ningún animal se queda atrás en la emergencia</h1>
-<p style="color:#cfe7e3;font-size:18px;margin-top:18px;max-width:520px;text-wrap:pretty">Reunimos mascotas perdidas con sus familias, coordinamos rescates y refugios, y facilitamos adopciones responsables durante desastres naturales en Venezuela.</p>
-<div style="display:flex;gap:13px;margin-top:30px;flex-wrap:wrap">
-<button onClick="{{ openLostReport }}" style="border:none;background:#F26B4E;color:#fff;font-weight:700;font-size:16px;padding:15px 24px;border-radius:12px;box-shadow:0 8px 24px rgba(242,107,78,.4);display:flex;align-items:center;gap:9px;transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 12px 30px rgba(242,107,78,.5)">📣 Reportar Mascota</button>
-<button onClick="{{ goAdopt }}" style="border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);color:#fff;font-weight:700;font-size:16px;padding:15px 24px;border-radius:12px;display:flex;align-items:center;gap:9px;transition:background .15s" style-hover="background:rgba(255,255,255,.18)">💜 Quiero Adoptar</button>
-</div>
-<div style="display:flex;gap:30px;margin-top:36px;flex-wrap:wrap">
-<sc-for list="{{ heroStats }}" as="s" hint-placeholder-count="3">
-<div><div style="font-family:'Sora';font-weight:700;font-size:26px;color:#fff">{{ s.n }}</div><div style="color:#9fd0c9;font-size:13px;font-weight:500">{{ s.l }}</div></div>
-</sc-for>
-</div>
-</div>
-<div style="position:relative">
-<div style="background:rgba(255,255,255,.96);border-radius:20px;padding:8px;box-shadow:0 30px 70px rgba(7,52,48,.45);transform:rotate(1.5deg)">
-<div style="border-radius:14px;height:300px;background:linear-gradient(140deg,#E3F0EE,#cfe6e2 60%,#FBE7E0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
-<span style="font-size:74px;opacity:.5">🐾</span>
-<span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.05em;color:rgba(28,43,42,.5)">foto · equipo veterinario en campo</span>
-</div>
-</div>
-<div style="position:absolute;bottom:-18px;left:-18px;background:#fff;border-radius:14px;padding:13px 16px;box-shadow:0 12px 30px rgba(7,52,48,.22);display:flex;align-items:center;gap:11px">
-<div style="width:38px;height:38px;border-radius:10px;background:#e7f5ef;display:flex;align-items:center;justify-content:center;font-size:19px">✅</div>
-<div style="line-height:1.15"><div style="font-weight:700;font-size:14px;color:#163b37;font-family:'Sora'">Revisado por veterinario</div><div style="font-size:12px;color:#7a857f">Cada caso es verificado</div></div>
-</div>
-</div>
-</div>
-</section>
+  <div class="wrap section">
+    <div class="sec-head"><div class="eyebrow">Cómo ayudamos</div><h2>Cuatro frentes, una sola misión</h2></div>
+    <div class="feat-grid" id="featGrid"></div>
+  </div>
 
-<!-- FEATURE CARDS -->
-<section style="max-width:1240px;margin:0 auto;padding:56px 22px 10px">
-<div style="display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px">
-<div>
-<div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F26B4E">Cómo ayudamos</div>
-<h2 style="font-family:'Sora';font-weight:700;font-size:30px;color:#163b37;margin-top:6px;letter-spacing:-.015em">Cuatro frentes, una sola misión</h2>
-</div>
-</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px">
-<sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
-<div onClick="{{ f.go }}" style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;padding:24px 22px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;position:relative;overflow:hidden" style-hover="transform:translateY(-5px);box-shadow:0 18px 36px rgba(28,43,42,.1);border-color:#e0d8c9">
-<span style="position:absolute;top:-14px;right:-8px;font-size:64px;opacity:.06">🐾</span>
-<div style="width:48px;height:48px;border-radius:13px;background:{{ f.tint }};display:flex;align-items:center;justify-content:center;font-size:23px;margin-bottom:16px">{{ f.dot }}</div>
-<h3 style="font-family:'Sora';font-weight:700;font-size:18px;color:#163b37">{{ f.title }}</h3>
-<p style="color:#6b756f;font-size:14.5px;margin-top:7px;text-wrap:pretty">{{ f.desc }}</p>
-<div style="margin-top:15px;color:{{ f.accent }};font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px">{{ f.cta }} →</div>
-</div>
-</sc-for>
-</div>
-</section>
+  <div class="wrap section">
+    <div class="strip-head"><h2>Reportes recientes <span class="pulse"></span></h2><button class="btn-out" data-nav="lost">Ver todos</button></div>
+    <div class="strip" id="latestStrip"></div>
+  </div>
 
-<!-- LATEST STRIP -->
-<section style="max-width:1240px;margin:0 auto;padding:48px 22px 10px">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px">
-<h2 style="font-family:'Sora';font-weight:700;font-size:24px;color:#163b37;display:flex;align-items:center;gap:10px">Reportes recientes <span style="width:8px;height:8px;border-radius:50%;background:#DC4A4A;box-shadow:0 0 0 4px rgba(220,74,74,.18);display:inline-block"></span></h2>
-<button onClick="{{ goLost }}" style="border:1.5px solid #d9e3df;background:#fff;color:#0F766E;font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:9px" style-hover="background:#f0f6f4">Ver todos</button>
-</div>
-<div class="vpv-strip" style="display:flex;gap:16px;overflow-x:auto;padding:4px 2px 16px;scroll-snap-type:x mandatory">
-<sc-for list="{{ latest }}" as="p" hint-placeholder-count="5">
-<div style="flex:0 0 230px;scroll-snap-align:start;background:#fff;border:1px solid #EDE7DC;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:transform .18s,box-shadow .18s" style-hover="transform:translateY(-4px);box-shadow:0 14px 30px rgba(28,43,42,.12)">
-<div style="position:relative;height:140px;background:linear-gradient(140deg,{{ p.ta }},{{ p.tb }});display:flex;align-items:center;justify-content:center">
-<span style="font-size:46px;opacity:.4">🐾</span>
-<div style="position:absolute;top:9px;left:9px;background:{{ p.badgeColor }};color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:4px">{{ p.badgeIcon }} {{ p.badgeText }}</div>
-<span style="position:absolute;bottom:7px;right:9px;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;color:rgba(28,43,42,.45)">{{ p.photoLabel }}</span>
-</div>
-<div style="padding:13px 14px">
-<div style="font-family:'Sora';font-weight:700;font-size:16px;color:#163b37">{{ p.name }}</div>
-<div style="font-size:12.5px;color:#8a938d">{{ p.breed }}</div>
-<div style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:#6b756f;margin-top:9px">📍 {{ p.location }}</div>
-<div style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:#9aa49f;margin-top:3px">🕒 {{ p.time }}</div>
-</div>
-</div>
-</sc-for>
-</div>
-</section>
+  <div class="howbg">
+    <div class="how">
+      <div class="eyebrow">Proceso</div><h2>Cómo funciona</h2>
+      <p>La revisión veterinaria está en el centro de todo lo que hacemos.</p>
+      <div class="how-grid" id="howGrid"></div>
+    </div>
+  </div>
 
-<!-- HOW IT WORKS -->
-<section style="background:#fff;border-top:1px solid #EDE7DC;border-bottom:1px solid #EDE7DC;margin-top:40px">
-<div style="max-width:1080px;margin:0 auto;padding:60px 22px;text-align:center">
-<div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F26B4E">Proceso</div>
-<h2 style="font-family:'Sora';font-weight:700;font-size:30px;color:#163b37;margin-top:8px;letter-spacing:-.015em">Cómo funciona</h2>
-<p style="color:#6b756f;font-size:16px;margin-top:10px;max-width:540px;margin-left:auto;margin-right:auto">La revisión veterinaria está en el centro de todo lo que hacemos.</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:40px;position:relative">
-<sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
-<div style="position:relative;padding:28px 22px;border:1px solid #EDE7DC;border-radius:18px;background:#FCFAF6;text-align:left">
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-<div style="width:46px;height:46px;border-radius:13px;background:{{ s.tint }};display:flex;align-items:center;justify-content:center;font-size:22px">{{ s.icon }}</div>
-<span style="font-family:'Sora';font-weight:800;font-size:34px;color:#e7ddcb">{{ s.num }}</span>
-</div>
-<h3 style="font-family:'Sora';font-weight:700;font-size:18px;color:#163b37">{{ s.title }}</h3>
-<p style="color:#6b756f;font-size:14.5px;margin-top:7px;text-wrap:pretty">{{ s.desc }}</p>
-</div>
-</sc-for>
-</div>
-</div>
+  <div class="wrap">
+    <div class="band">
+      <span class="paww">🐾</span>
+      <div><h2>¿Encontraste un animal en peligro?</h2><p>Repórtalo en minutos. Un veterinario revisará el caso y te guiará en los siguientes pasos.</p></div>
+      <button data-report="encontrada">🟢 Reportar Encontrada</button>
+    </div>
+  </div>
 </section>
-
-<!-- CTA BAND -->
-<section style="max-width:1240px;margin:0 auto;padding:56px 22px">
-<div style="background:linear-gradient(120deg,#F26B4E,#e0573b);border-radius:22px;padding:46px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(242,107,78,.28)">
-<span style="position:absolute;bottom:-30px;right:30px;font-size:160px;opacity:.12;color:#fff">🐾</span>
-<div style="position:relative">
-<h2 style="font-family:'Sora';font-weight:700;font-size:28px;color:#fff;letter-spacing:-.01em">¿Encontraste un animal en peligro?</h2>
-<p style="color:#ffe5dd;font-size:16px;margin-top:8px;max-width:480px">Repórtalo en minutos. Un veterinario revisará el caso y te guiará en los siguientes pasos.</p>
-</div>
-<button onClick="{{ openFoundReport }}" style="position:relative;border:none;background:#fff;color:#e0573b;font-weight:700;font-size:16px;padding:15px 26px;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.18);transition:transform .15s" style-hover="transform:translateY(-2px)">🟢 Reportar Encontrada</button>
-</div>
-</section>
-</div>
-</sc-if>
 
 <!-- ===================== LOST ===================== -->
-<sc-if value="{{ isLost }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Mascotas Perdidas" style="max-width:1240px;margin:0 auto;padding:40px 22px 90px;animation:vpvUp .35s ease both">
-<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="width:11px;height:11px;border-radius:50%;background:#DC4A4A;box-shadow:0 0 0 5px rgba(220,74,74,.16)"></span><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#DC4A4A">Mascotas perdidas</span></div>
-<h1 style="font-family:'Sora';font-weight:800;font-size:34px;color:#163b37;letter-spacing:-.02em">Ayúdanos a encontrarlos</h1>
-<p style="color:#6b756f;font-size:16px;margin-top:6px;max-width:600px">Si reconoces a alguno de estos animales, contacta directamente a la familia. Cada reporte fue ingresado durante la emergencia.</p>
-
-<!-- FILTER BAR -->
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;padding:14px 16px;margin-top:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<div style="display:flex;gap:7px;flex-wrap:wrap">
-<sc-for list="{{ lostChips }}" as="c" hint-placeholder-count="4">
-<button onClick="{{ c.go }}" style="border:1.5px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;transition:all .15s">{{ c.label }}</button>
-</sc-for>
-</div>
-<div style="width:1px;height:24px;background:#ECE5DA"></div>
-<div style="position:relative;flex:1;min-width:180px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5">📍</span><input placeholder="Ciudad o estado…" style="width:100%;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:9px 12px 9px 34px;font-size:14px;color:#1C2B2A;outline:none"></div>
-<select style="border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:9px 12px;font-size:14px;color:#5f6e6b;outline:none"><option>Cualquier fecha</option><option>Últimas 24h</option><option>Última semana</option></select>
-<div style="margin-left:auto;font-size:13.5px;color:#9aa49f;font-weight:600">{{ lostCount }} resultados</div>
-</div>
-
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;margin-top:22px">
-<sc-for list="{{ filteredLost }}" as="p" hint-placeholder-count="6">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:transform .18s,box-shadow .18s" style-hover="transform:translateY(-4px);box-shadow:0 14px 30px rgba(28,43,42,.12)">
-<div style="position:relative;height:182px;background:linear-gradient(140deg,{{ p.ta }},{{ p.tb }});display:flex;align-items:center;justify-content:center">
-<span style="font-size:54px;opacity:.4">🐾</span>
-<div style="position:absolute;top:11px;left:11px;background:#DC4A4A;color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.05em;padding:5px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(220,74,74,.4)">🔴 PERDIDO</div>
-<span style="position:absolute;bottom:8px;right:11px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(28,43,42,.45)">{{ p.photoLabel }}</span>
-</div>
-<div style="padding:15px 16px">
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font-family:'Sora';font-weight:700;font-size:18px;color:#163b37">{{ p.name }}</div><span style="font-size:12px;color:#9aa49f">{{ p.species }}</span></div>
-<div style="font-size:13px;color:#8a938d">{{ p.breed }}</div>
-<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#6b756f;margin-top:10px">📍 {{ p.location }}</div>
-<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#9aa49f;margin-top:3px">🕒 {{ p.time }}</div>
-<div style="display:flex;gap:8px;margin-top:14px">
-<button style="flex:1;border:none;background:#0F766E;color:#fff;font-weight:600;font-size:13px;padding:9px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s" style-hover="background:#0c5f59">📞 Llamar</button>
-<button style="flex:1;border:none;background:#25864e;color:#fff;font-weight:600;font-size:13px;padding:9px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s" style-hover="background:#1f6f41">💬 WhatsApp</button>
-</div>
-<button style="width:100%;border:1.5px solid #E6DFD3;background:#fff;color:#6b756f;font-weight:600;font-size:13px;padding:8px;border-radius:9px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px" style-hover="background:#FCFAF6;border-color:#d9d2c7">🔗 Compartir</button>
-</div>
-</div>
-</sc-for>
-</div>
-</div>
-</sc-if>
+<section class="view" id="view-lost">
+  <div class="wrap page-pad">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span class="dot" style="background:var(--lost);box-shadow:0 0 0 5px rgba(220,74,74,.16)"></span><span class="eyebrow" style="color:var(--lost)">Mascotas perdidas</span></div>
+    <h1 class="page-h1">Ayúdanos a encontrarlos</h1>
+    <p class="lead">Si reconoces a alguno de estos animales, contacta directamente a la familia. Cada reporte fue ingresado durante la emergencia.</p>
+    <div class="filterbar">
+      <div class="chips" id="lostChips"></div>
+      <div class="divider"></div>
+      <div class="search"><i>📍</i><input placeholder="Ciudad o estado…"></div>
+      <select class="fsel"><option>Cualquier fecha</option><option>Últimas 24h</option><option>Última semana</option></select>
+      <div class="count" id="lostCount"></div>
+    </div>
+    <div class="grid" id="lostGrid"></div>
+  </div>
+</section>
 
 <!-- ===================== FOUND ===================== -->
-<sc-if value="{{ isFound }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Mascotas Encontradas" style="max-width:1240px;margin:0 auto;padding:40px 22px 90px;animation:vpvUp .35s ease both">
-<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="width:11px;height:11px;border-radius:50%;background:#2F9E63;box-shadow:0 0 0 5px rgba(47,158,99,.16)"></span><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2F9E63">Mascotas encontradas</span></div>
-<h1 style="font-family:'Sora';font-weight:800;font-size:34px;color:#163b37;letter-spacing:-.02em">Animales a salvo, buscando a su familia</h1>
-<p style="color:#6b756f;font-size:16px;margin-top:6px;max-width:600px">Estos animales fueron rescatados por la comunidad. Si alguno es tuyo o de alguien que conoces, escríbenos.</p>
-
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;padding:14px 16px;margin-top:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<div style="display:flex;gap:7px;flex-wrap:wrap">
-<sc-for list="{{ foundChips }}" as="c" hint-placeholder-count="4">
-<button onClick="{{ c.go }}" style="border:1.5px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;transition:all .15s">{{ c.label }}</button>
-</sc-for>
-</div>
-<div style="width:1px;height:24px;background:#ECE5DA"></div>
-<div style="position:relative;flex:1;min-width:180px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5">📍</span><input placeholder="Ciudad o estado…" style="width:100%;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:9px 12px 9px 34px;font-size:14px;color:#1C2B2A;outline:none"></div>
-<div style="margin-left:auto;font-size:13.5px;color:#9aa49f;font-weight:600">{{ foundCount }} resultados</div>
-</div>
-
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px;margin-top:22px">
-<sc-for list="{{ filteredFound }}" as="p" hint-placeholder-count="6">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:transform .18s,box-shadow .18s" style-hover="transform:translateY(-4px);box-shadow:0 14px 30px rgba(28,43,42,.12)">
-<div style="position:relative;height:182px;background:linear-gradient(140deg,{{ p.ta }},{{ p.tb }});display:flex;align-items:center;justify-content:center">
-<span style="font-size:54px;opacity:.4">🐾</span>
-<div style="position:absolute;top:11px;left:11px;background:#2F9E63;color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.05em;padding:5px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(47,158,99,.4)">🟢 ENCONTRADO</div>
-<div style="position:absolute;bottom:9px;left:11px;background:rgba(255,255,255,.92);color:#33403c;font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:5px">{{ p.statusIcon }} {{ p.status }}</div>
-</div>
-<div style="padding:15px 16px">
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px"><div style="font-family:'Sora';font-weight:700;font-size:18px;color:#163b37">{{ p.name }}</div><span style="font-size:12px;color:#9aa49f">{{ p.species }}</span></div>
-<div style="font-size:13px;color:#8a938d">{{ p.breed }}</div>
-<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#6b756f;margin-top:10px">📍 {{ p.location }}</div>
-<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#9aa49f;margin-top:3px">🕒 {{ p.time }}</div>
-<div style="display:flex;gap:8px;margin-top:14px">
-<button style="flex:1;border:none;background:#0F766E;color:#fff;font-weight:600;font-size:13px;padding:9px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s" style-hover="background:#0c5f59">📞 Llamar</button>
-<button style="flex:1;border:none;background:#25864e;color:#fff;font-weight:600;font-size:13px;padding:9px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s" style-hover="background:#1f6f41">💬 WhatsApp</button>
-</div>
-<button style="width:100%;border:1.5px solid #E6DFD3;background:#fff;color:#6b756f;font-weight:600;font-size:13px;padding:8px;border-radius:9px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px" style-hover="background:#FCFAF6;border-color:#d9d2c7">🔗 Compartir</button>
-</div>
-</div>
-</sc-for>
-</div>
-</div>
-</sc-if>
+<section class="view" id="view-found">
+  <div class="wrap page-pad">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span class="dot" style="background:var(--found);box-shadow:0 0 0 5px rgba(47,158,99,.16)"></span><span class="eyebrow" style="color:var(--found)">Mascotas encontradas</span></div>
+    <h1 class="page-h1">Animales a salvo, buscando a su familia</h1>
+    <p class="lead">Estos animales fueron rescatados por la comunidad. Si alguno es tuyo o de alguien que conoces, escríbenos.</p>
+    <div class="filterbar">
+      <div class="chips" id="foundChips"></div>
+      <div class="divider"></div>
+      <div class="search"><i>📍</i><input placeholder="Ciudad o estado…"></div>
+      <div class="count" id="foundCount"></div>
+    </div>
+    <div class="grid" id="foundGrid"></div>
+  </div>
+</section>
 
 <!-- ===================== SHELTERS ===================== -->
-<sc-if value="{{ isShelters }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Refugios" style="max-width:1240px;margin:0 auto;padding:40px 22px 90px;animation:vpvUp .35s ease both">
-<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="font-size:15px">🏠</span><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0F766E">Refugios temporales</span></div>
-<div style="display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap">
-<div><h1 style="font-family:'Sora';font-weight:800;font-size:34px;color:#163b37;letter-spacing:-.02em">Albergues activos</h1>
-<p style="color:#6b756f;font-size:16px;margin-top:6px;max-width:560px">Espacios con cupo verificado y servicios coordinados por veterinarios voluntarios.</p></div>
-<button style="border:none;background:#0F766E;color:#fff;font-weight:600;font-size:14.5px;padding:12px 18px;border-radius:11px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(15,118,110,.28);transition:transform .15s" style-hover="transform:translateY(-2px)">+ Registrar Refugio</button>
-</div>
-
-<!-- MAP PLACEHOLDER -->
-<div style="margin-top:24px;border:1px solid #EDE7DC;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#eaf1ef,#e3ece9);position:relative;height:240px;display:flex;align-items:center;justify-content:center">
-<div style="position:absolute;inset:0;background-image:linear-gradient(rgba(15,118,110,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(15,118,110,.06) 1px,transparent 1px);background-size:34px 34px"></div>
-<span style="position:absolute;top:32%;left:24%;font-size:26px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2))">📍</span>
-<span style="position:absolute;top:54%;left:58%;font-size:26px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2))">📍</span>
-<span style="position:absolute;top:40%;left:74%;font-size:26px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2))">📍</span>
-<div style="position:relative;text-align:center;background:rgba(255,255,255,.85);padding:14px 20px;border-radius:12px;backdrop-filter:blur(2px)"><div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#5f6e6b;letter-spacing:.05em">mapa interactivo · refugios geolocalizados</div></div>
-</div>
-
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;margin-top:22px">
-<sc-for list="{{ shelters }}" as="s" hint-placeholder-count="4">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;padding:20px;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:box-shadow .18s" style-hover="box-shadow:0 14px 30px rgba(28,43,42,.1)">
-<div style="display:flex;align-items:start;justify-content:space-between;gap:10px">
-<div><h3 style="font-family:'Sora';font-weight:700;font-size:19px;color:#163b37">{{ s.name }}</h3>
-<div style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:#6b756f;margin-top:5px">📍 {{ s.address }}</div></div>
-<span style="background:{{ s.statusBg }};color:{{ s.statusColor }};font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap">{{ s.statusLabel }}</span>
-</div>
-<div style="margin-top:18px;display:flex;flex-direction:column;gap:13px">
-<div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="font-weight:600;color:#33403c">🐕 Perros</span><span style="color:#8a938d">{{ s.dogN }} / {{ s.dogMax }}</span></div><div style="height:9px;background:#EDE7DC;border-radius:999px;overflow:hidden"><div style="height:100%;width:{{ s.dogPct }}%;background:{{ s.dogColor }};border-radius:999px;transition:width .5s"></div></div></div>
-<div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="font-weight:600;color:#33403c">🐈 Gatos</span><span style="color:#8a938d">{{ s.catN }} / {{ s.catMax }}</span></div><div style="height:9px;background:#EDE7DC;border-radius:999px;overflow:hidden"><div style="height:100%;width:{{ s.catPct }}%;background:{{ s.catColor }};border-radius:999px;transition:width .5s"></div></div></div>
-</div>
-<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:18px">
-<sc-for list="{{ s.services }}" as="sv" hint-placeholder-count="3">
-<span style="background:#F0F7F5;color:#0F766E;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:8px;display:flex;align-items:center;gap:5px">{{ sv.icon }} {{ sv.label }}</span>
-</sc-for>
-</div>
-<button style="width:100%;border:1.5px solid #cfddd9;background:#fff;color:#0F766E;font-weight:600;font-size:14px;padding:10px;border-radius:10px;margin-top:18px;transition:background .15s" style-hover="background:#f0f6f4">Ver detalles y contacto</button>
-</div>
-</sc-for>
-</div>
-</div>
-</sc-if>
+<section class="view" id="view-shelters">
+  <div class="wrap page-pad">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="font-size:15px">🏠</span><span class="eyebrow" style="color:var(--teal)">Refugios temporales</span></div>
+    <div style="display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div><h1 class="page-h1">Albergues activos</h1><p class="lead">Espacios con cupo verificado y servicios coordinados por veterinarios voluntarios.</p></div>
+      <button class="btn-teal">+ Registrar Refugio</button>
+    </div>
+    <div class="map">
+      <div class="gridlines"></div>
+      <span class="pin" style="top:32%;left:24%">📍</span><span class="pin" style="top:54%;left:58%">📍</span><span class="pin" style="top:40%;left:74%">📍</span>
+      <div class="lbl"><div class="mono">mapa interactivo · refugios geolocalizados</div></div>
+    </div>
+    <div class="shelters" id="sheltersGrid"></div>
+  </div>
+</section>
 
 <!-- ===================== ADOPTIONS ===================== -->
-<sc-if value="{{ isAdopt }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Adopciones" style="max-width:1240px;margin:0 auto;padding:40px 22px 90px;animation:vpvUp .35s ease both">
-<div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="font-size:15px">💜</span><span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7E5BD0">Adopciones</span></div>
-<h1 style="font-family:'Sora';font-weight:800;font-size:34px;color:#163b37;letter-spacing:-.02em">Un nuevo hogar, con respaldo veterinario</h1>
-<p style="color:#6b756f;font-size:16px;margin-top:6px;max-width:620px">Cada animal en adopción fue evaluado y aprobado por un médico veterinario de nuestra red. Adoptar es un compromiso: te acompañamos en el proceso.</p>
-
-<!-- TABS -->
-<div style="display:inline-flex;background:#F0EAE0;border-radius:12px;padding:4px;margin-top:24px;gap:4px">
-<button onClick="{{ tabList }}" style="border:none;background:{{ tabListBg }};color:{{ tabListColor }};font-weight:600;font-size:14.5px;padding:10px 20px;border-radius:9px;box-shadow:{{ tabListShadow }};transition:all .18s">Animales en Adopción</button>
-<button onClick="{{ tabApply }}" style="border:none;background:{{ tabApplyBg }};color:{{ tabApplyColor }};font-weight:600;font-size:14.5px;padding:10px 20px;border-radius:9px;box-shadow:{{ tabApplyShadow }};transition:all .18s">Quiero Adoptar</button>
-</div>
-
-<sc-if value="{{ isAdoptList }}" hint-placeholder-val="{{ true }}">
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:18px;margin-top:24px">
-<sc-for list="{{ adoptions }}" as="a" hint-placeholder-count="6">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04);transition:transform .18s,box-shadow .18s" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(28,43,42,.12)">
-<div style="position:relative;height:190px;background:linear-gradient(140deg,{{ a.ta }},{{ a.tb }});display:flex;align-items:center;justify-content:center">
-<span style="font-size:56px;opacity:.4">🐾</span>
-<div style="position:absolute;top:11px;left:11px;background:{{ a.statusColor }};color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 10px;border-radius:999px">{{ a.status }}</div>
-<span style="position:absolute;bottom:8px;right:11px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:rgba(28,43,42,.45)">{{ a.photoLabel }}</span>
-</div>
-<div style="padding:16px">
-<div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-family:'Sora';font-weight:700;font-size:19px;color:#163b37">{{ a.name }}</div><span style="font-size:12.5px;color:#9aa49f">{{ a.age }}</span></div>
-<div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
-<span style="background:#F4F0E8;color:#6b756f;font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px">{{ a.sizeIcon }} {{ a.size }}</span>
-<span style="background:{{ a.healthBg }};color:{{ a.healthColor }};font-size:12px;font-weight:600;padding:4px 9px;border-radius:7px">{{ a.health }}</span>
-</div>
-<div style="display:flex;align-items:center;gap:7px;margin-top:13px;background:#e7f5ef;border:1px solid #cfe9df;border-radius:9px;padding:8px 10px"><span style="font-size:14px">✅</span><span style="font-size:12.5px;font-weight:600;color:#1b7a55">Revisado por Veterinario</span></div>
-<button onClick="{{ a.apply }}" style="width:100%;border:none;background:#7E5BD0;color:#fff;font-weight:600;font-size:14px;padding:11px;border-radius:10px;margin-top:13px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 5px 14px rgba(126,91,208,.3);transition:transform .15s" style-hover="transform:translateY(-1px)">💜 Solicitar Adopción</button>
-</div>
-</div>
-</sc-for>
-</div>
-</sc-if>
-
-<sc-if value="{{ isAdoptApply }}" hint-placeholder-val="{{ false }}">
-<div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:start">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;padding:26px;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<h3 style="font-family:'Sora';font-weight:700;font-size:21px;color:#163b37">Formulario de adopción</h3>
-<p style="color:#6b756f;font-size:14.5px;margin-top:6px">Cuéntanos sobre ti y tu hogar. Un veterinario revisará tu solicitud en 24–48 horas.</p>
-<div style="display:flex;flex-direction:column;gap:13px;margin-top:20px">
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Nombre completo</label><input placeholder="Tu nombre" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div>
-<div style="display:flex;gap:11px"><div style="flex:1"><label style="font-size:13px;font-weight:600;color:#33403c">Teléfono</label><input placeholder="0414…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div><div style="flex:1"><label style="font-size:13px;font-weight:600;color:#33403c">Ciudad</label><input placeholder="Ciudad" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div></div>
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Tipo de vivienda</label><select style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:11px 13px;font-size:14.5px;color:#5f6e6b;outline:none"><option>Casa con patio</option><option>Apartamento</option><option>Casa sin patio</option></select></div>
-<div><label style="font-size:13px;font-weight:600;color:#33403c">¿Por qué quieres adoptar?</label><textarea placeholder="Cuéntanos…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#FCFAF6;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none;min-height:90px;resize:vertical"></textarea></div>
-<button style="border:none;background:#7E5BD0;color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;box-shadow:0 6px 16px rgba(126,91,208,.3)">Enviar solicitud</button>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;gap:14px">
-<div style="background:#f6f1fb;border:1px solid #e7daf6;border-radius:16px;padding:22px">
-<h4 style="font-family:'Sora';font-weight:700;font-size:16px;color:#5a3fa3;display:flex;align-items:center;gap:8px">🩺 Proceso responsable</h4>
-<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
-<sc-for list="{{ adoptSteps }}" as="st" hint-placeholder-count="3">
-<div style="display:flex;gap:12px"><div style="width:28px;height:28px;border-radius:8px;background:#7E5BD0;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ st.n }}</div><div><div style="font-weight:700;font-size:14px;color:#33403c">{{ st.t }}</div><div style="font-size:13px;color:#6b756f">{{ st.d }}</div></div></div>
-</sc-for>
-</div>
-</div>
-<div style="background:#e7f5ef;border:1px solid #cfe9df;border-radius:16px;padding:20px;display:flex;gap:12px;align-items:start"><span style="font-size:22px">✅</span><div><div style="font-weight:700;font-size:14.5px;color:#1b7a55">Aprobación veterinaria garantizada</div><div style="font-size:13px;color:#3d7d63;margin-top:3px">Ningún animal sale de nuestra red sin una evaluación de salud completa.</div></div></div>
-</div>
-</div>
-</sc-if>
-</div>
-</sc-if>
+<section class="view" id="view-adopt">
+  <div class="wrap page-pad">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px"><span style="font-size:15px">💜</span><span class="eyebrow" style="color:var(--adopt)">Adopciones</span></div>
+    <h1 class="page-h1">Un nuevo hogar, con respaldo veterinario</h1>
+    <p class="lead">Cada animal en adopción fue evaluado y aprobado por un médico veterinario de nuestra red. Adoptar es un compromiso: te acompañamos en el proceso.</p>
+    <div class="tabs">
+      <button class="tab active" id="tab-list" data-tab="list">Animales en Adopción</button>
+      <button class="tab" id="tab-apply" data-tab="apply">Quiero Adoptar</button>
+    </div>
+    <div id="adoptListWrap"><div class="adopt-grid" id="adoptGrid"></div></div>
+    <div id="adoptApplyWrap" style="display:none">
+      <div class="apply-grid">
+        <div class="form-card">
+          <h3>Formulario de adopción</h3>
+          <p>Cuéntanos sobre ti y tu hogar. Un veterinario revisará tu solicitud en 24–48 horas.</p>
+          <div class="fcol">
+            <div><label>Nombre completo</label><input class="inp" placeholder="Tu nombre"></div>
+            <div class="frow"><div><label>Teléfono</label><input class="inp" placeholder="0414…"></div><div><label>Ciudad</label><input class="inp" placeholder="Ciudad"></div></div>
+            <div><label>Tipo de vivienda</label><select class="inp"><option>Casa con patio</option><option>Apartamento</option><option>Casa sin patio</option></select></div>
+            <div><label>¿Por qué quieres adoptar?</label><textarea class="inp" placeholder="Cuéntanos…"></textarea></div>
+            <button class="submit-adopt">Enviar solicitud</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="aside-card">
+            <h4>🩺 Proceso responsable</h4>
+            <div class="proc">
+              <div class="row"><div class="n">1</div><div><b>Solicitud</b><div><small>Completas el formulario con tus datos y los de tu hogar.</small></div></div></div>
+              <div class="row"><div class="n">2</div><div><b>Revisión veterinaria</b><div><small>Un MV evalúa la compatibilidad y agenda una entrevista.</small></div></div></div>
+              <div class="row"><div class="n">3</div><div><b>Entrega responsable</b><div><small>Firmas el compromiso de adopción y recibes seguimiento.</small></div></div></div>
+            </div>
+          </div>
+          <div class="guarantee"><span style="font-size:22px">✅</span><div><b>Aprobación veterinaria garantizada</b><small>Ningún animal sale de nuestra red sin una evaluación de salud completa.</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ===================== ABOUT ===================== -->
-<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Quiénes Somos" style="animation:vpvUp .35s ease both">
-<section style="max-width:900px;margin:0 auto;padding:56px 22px 30px;text-align:center">
-<div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0F766E">Quiénes somos</div>
-<h1 style="font-family:'Sora';font-weight:800;font-size:38px;color:#163b37;margin-top:10px;letter-spacing:-.02em;text-wrap:balance">Veterinarios al servicio de Venezuela</h1>
-<p style="color:#566159;font-size:18px;margin-top:16px;text-wrap:pretty">Somos una red de médicos veterinarios colegiados, rescatistas y voluntarios que se activa ante desastres naturales para proteger a los animales y acompañar a las familias afectadas. No vendemos nada: coordinamos ayuda.</p>
+<section class="view" id="view-about">
+  <div class="about-hero">
+    <div class="eyebrow">Quiénes somos</div>
+    <h1>Veterinarios al servicio de Venezuela</h1>
+    <p>Somos una red de médicos veterinarios colegiados, rescatistas y voluntarios que se activa ante desastres naturales para proteger a los animales y acompañar a las familias afectadas. No vendemos nada: coordinamos ayuda.</p>
+  </div>
+  <div class="values" id="valuesGrid"></div>
+  <div class="statband">
+    <div class="in">
+      <span class="paww">🐾</span>
+      <div class="row">
+        <div><div class="n">480+</div><div class="l">Animales atendidos</div></div>
+        <div><div class="n">210</div><div class="l">Reencuentros logrados</div></div>
+        <div><div class="n">67</div><div class="l">Adopciones</div></div>
+        <div><div class="n">64</div><div class="l">Veterinarios colegiados</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="join">
+    <h2>¿Quieres sumarte a la red?</h2>
+    <p>Si eres veterinario, rescatista o quieres ser voluntario, te necesitamos.</p>
+    <div class="btns"><button class="b1">Quiero ser voluntario</button><button class="b2" data-nav="vet">Soy veterinario</button></div>
+  </div>
 </section>
-<section style="max-width:1080px;margin:0 auto;padding:10px 22px 20px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
-<sc-for list="{{ values }}" as="v" hint-placeholder-count="3">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;padding:24px"><div style="width:46px;height:46px;border-radius:12px;background:{{ v.tint }};display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px">{{ v.icon }}</div><h3 style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37">{{ v.title }}</h3><p style="color:#6b756f;font-size:14.5px;margin-top:6px;text-wrap:pretty">{{ v.desc }}</p></div>
-</sc-for>
-</div></section>
-<section style="max-width:1080px;margin:30px auto 0;padding:0 22px"><div style="background:#0F766E;border-radius:22px;padding:44px 36px;position:relative;overflow:hidden">
-<span style="position:absolute;bottom:-30px;right:20px;font-size:150px;opacity:.08;color:#fff">🐾</span>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:24px;position:relative">
-<sc-for list="{{ aboutStats }}" as="s" hint-placeholder-count="4">
-<div style="text-align:center"><div style="font-family:'Sora';font-weight:800;font-size:36px;color:#fff">{{ s.n }}</div><div style="color:#a9d8d1;font-size:14px;font-weight:500;margin-top:2px">{{ s.l }}</div></div>
-</sc-for>
-</div></div></section>
-<section style="max-width:900px;margin:0 auto;padding:46px 22px 60px;text-align:center">
-<h2 style="font-family:'Sora';font-weight:700;font-size:26px;color:#163b37">¿Quieres sumarte a la red?</h2>
-<p style="color:#6b756f;font-size:16px;margin-top:8px">Si eres veterinario, rescatista o quieres ser voluntario, te necesitamos.</p>
-<div style="display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap">
-<button style="border:none;background:#F26B4E;color:#fff;font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px;box-shadow:0 8px 20px rgba(242,107,78,.32)" style-hover="transform:translateY(-2px)">Quiero ser voluntario</button>
-<button onClick="{{ goVet }}" style="border:1.5px solid #cfddd9;background:#fff;color:#0F766E;font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px" style-hover="background:#f0f6f4">Soy veterinario</button>
-</div>
-</section>
-</div>
-</sc-if>
 
 <!-- ===================== VET DASHBOARD ===================== -->
-<sc-if value="{{ isVet }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Panel Veterinario" style="max-width:1240px;margin:0 auto;padding:28px 22px 80px;animation:vpvUp .35s ease both">
-<div style="display:grid;grid-template-columns:230px 1fr;gap:24px;align-items:start">
-
-<!-- SIDEBAR -->
-<aside style="background:#163b37;border-radius:18px;padding:20px 14px;position:sticky;top:88px">
-<div style="display:flex;align-items:center;gap:10px;padding:6px 8px 16px;border-bottom:1px solid rgba(255,255,255,.1)">
-<div style="width:36px;height:36px;border-radius:10px;background:#0F766E;display:flex;align-items:center;justify-content:center;font-size:17px">🩺</div>
-<div style="line-height:1.1"><div style="color:#fff;font-weight:700;font-size:13.5px;font-family:'Sora'">Dra. Patricia Salas</div><div style="color:#7fb8b0;font-size:11.5px">MV · Aragua</div></div>
-</div>
-<div style="display:flex;flex-direction:column;gap:3px;margin-top:14px">
-<sc-for list="{{ vetMenu }}" as="m" hint-placeholder-count="5">
-<div style="display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;font-size:13.5px;font-weight:{{ m.weight }};color:{{ m.color }};background:{{ m.bg }};cursor:pointer">{{ m.icon }} {{ m.label }}<span style="margin-left:auto">{{ m.badge }}</span></div>
-</sc-for>
-</div>
-<button onClick="{{ goHome }}" style="width:100%;margin-top:18px;border:1px solid rgba(255,255,255,.16);background:transparent;color:#a9d8d1;font-weight:600;font-size:13px;padding:9px;border-radius:9px" style-hover="background:rgba(255,255,255,.06)">← Salir del panel</button>
-</aside>
-
-<!-- MAIN -->
-<div>
-<div style="display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px">
-<div><h1 style="font-family:'Sora';font-weight:800;font-size:27px;color:#163b37;letter-spacing:-.01em">Panel de control</h1><p style="color:#8a938d;font-size:14.5px;margin-top:2px">Jueves, 26 de junio · Emergencia activa</p></div>
-<button style="border:none;background:#0F766E;color:#fff;font-weight:600;font-size:14px;padding:11px 16px;border-radius:10px;display:flex;align-items:center;gap:7px" style-hover="background:#0c5f59">+ Agregar animal</button>
-</div>
-
-<!-- STATS -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
-<sc-for list="{{ vetStats }}" as="s" hint-placeholder-count="4">
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<div style="display:flex;align-items:center;justify-content:space-between"><span style="width:38px;height:38px;border-radius:11px;background:{{ s.tint }};display:flex;align-items:center;justify-content:center;font-size:19px">{{ s.icon }}</span><span style="font-size:12px;font-weight:700;color:{{ s.deltaColor }}">{{ s.delta }}</span></div>
-<div style="font-family:'Sora';font-weight:800;font-size:30px;color:#163b37;margin-top:12px">{{ s.n }}</div>
-<div style="color:#8a938d;font-size:13.5px;font-weight:500">{{ s.l }}</div>
-</div>
-</sc-for>
-</div>
-
-<!-- REQUESTS TABLE -->
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;margin-top:20px;overflow:hidden;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #F0EAE0"><h3 style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37">Solicitudes de adopción pendientes</h3><span style="background:#fdeee9;color:#F26B4E;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px">{{ pendingCount }} por revisar</span></div>
-<div style="overflow-x:auto">
-<div style="min-width:680px">
-<div style="display:grid;grid-template-columns:1.4fr 1fr .9fr 1fr 1.5fr;gap:12px;padding:11px 22px;background:#FCFAF6;font-size:12px;font-weight:700;color:#9aa49f;letter-spacing:.04em;text-transform:uppercase"><div>Solicitante</div><div>Animal</div><div>Fecha</div><div>Estado</div><div style="text-align:right">Acciones</div></div>
-<sc-for list="{{ vetReqs }}" as="r" hint-placeholder-count="5">
-<div style="display:grid;grid-template-columns:1.4fr 1fr .9fr 1fr 1.5fr;gap:12px;padding:14px 22px;border-top:1px solid #F4EFE7;align-items:center">
-<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:50%;background:{{ r.avBg }};color:{{ r.avColor }};font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ r.initials }}</div><div style="line-height:1.15"><div style="font-weight:600;font-size:14px;color:#33403c">{{ r.applicant }}</div><div style="font-size:12px;color:#9aa49f">{{ r.city }}</div></div></div>
-<div style="font-size:14px;color:#33403c;font-weight:600">{{ r.animal }}</div>
-<div style="font-size:13.5px;color:#8a938d">{{ r.date }}</div>
-<div><span style="background:{{ r.stBg }};color:{{ r.stColor }};font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap">{{ r.status }}</span></div>
-<div style="display:flex;gap:6px;justify-content:flex-end">
-<sc-if value="{{ r.actionable }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ r.approve }}" style="border:none;background:#2F9E63;color:#fff;font-weight:600;font-size:12.5px;padding:7px 11px;border-radius:8px" style-hover="background:#27824f">Aprobar</button>
-<button onClick="{{ r.reject }}" style="border:1.5px solid #f0c9c9;background:#fff;color:#DC4A4A;font-weight:600;font-size:12.5px;padding:7px 11px;border-radius:8px" style-hover="background:#fdf2f2">Rechazar</button>
-<button style="border:1.5px solid #E6DFD3;background:#fff;color:#6b756f;font-weight:600;font-size:12.5px;padding:7px 10px;border-radius:8px" style-hover="background:#FCFAF6">Pedir info</button>
-</sc-if>
-<sc-if value="{{ r.resolved }}" hint-placeholder-val="{{ false }}">
-<span style="font-size:13px;font-weight:600;color:{{ r.stColor }};display:flex;align-items:center;gap:5px">{{ r.resolvedLabel }}</span>
-</sc-if>
-</div>
-</div>
-</sc-for>
-</div>
-</div>
-</div>
-
-<!-- ANIMAL MANAGEMENT -->
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:18px;margin-top:20px;padding:20px 22px;box-shadow:0 1px 2px rgba(28,43,42,.04)">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><h3 style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37">Animales bajo gestión</h3><button style="border:1.5px solid #E6DFD3;background:#fff;color:#6b756f;font-weight:600;font-size:13px;padding:7px 12px;border-radius:9px" style-hover="background:#FCFAF6">Ver todos</button></div>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:13px">
-<sc-for list="{{ vetAnimals }}" as="a" hint-placeholder-count="4">
-<div style="border:1px solid #F0EAE0;border-radius:13px;padding:12px;display:flex;align-items:center;gap:11px">
-<div style="width:46px;height:46px;border-radius:11px;background:linear-gradient(140deg,{{ a.ta }},{{ a.tb }});display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0">🐾</div>
-<div style="line-height:1.2;min-width:0"><div style="font-weight:700;font-size:14px;color:#33403c">{{ a.name }}</div><div style="font-size:12px;color:#9aa49f">{{ a.meta }}</div><span style="display:inline-block;margin-top:4px;background:{{ a.stBg }};color:{{ a.stColor }};font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px">{{ a.status }}</span></div>
-</div>
-</sc-for>
-</div>
-</div>
-</div>
-</div>
-</div>
-</sc-if>
+<section class="view" id="view-vet">
+  <div class="wrap vetlayout">
+    <aside class="sidebar">
+      <div class="sb-user"><div class="av">🩺</div><div><b>Dra. Patricia Salas</b><small>MV · Aragua</small></div></div>
+      <div class="sb-menu">
+        <div class="sb-item active">📊 Panel</div>
+        <div class="sb-item">📥 Solicitudes <span class="b" id="sbBadge">5</span></div>
+        <div class="sb-item">🐾 Animales</div>
+        <div class="sb-item">🏠 Refugios</div>
+        <div class="sb-item">⚙️ Configuración</div>
+      </div>
+      <button class="sb-exit" data-nav="home">← Salir del panel</button>
+    </aside>
+    <div>
+      <div class="vmain-head">
+        <div><h1>Panel de control</h1><p>Jueves, 26 de junio · Emergencia activa</p></div>
+        <button class="btn-teal">+ Agregar animal</button>
+      </div>
+      <div class="statgrid" id="statGrid"></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Solicitudes de adopción pendientes</h3><span class="pill-pending" id="pendPill">5 por revisar</span></div>
+        <div class="table-scroll"><div class="table">
+          <div class="trow thead"><div>Solicitante</div><div>Animal</div><div>Fecha</div><div>Estado</div><div style="text-align:right">Acciones</div></div>
+          <div id="reqRows"></div>
+        </div></div>
+      </div>
+      <div class="animals">
+        <div class="h"><h3>Animales bajo gestión</h3><button class="bt-info">Ver todos</button></div>
+        <div class="aglist" id="animalsList"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 </main>
 
 <!-- FOOTER -->
-<footer style="background:#10312d;color:#cfe0db;margin-top:auto">
-<div style="max-width:1240px;margin:0 auto;padding:50px 22px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:34px">
-<div>
-<div style="display:flex;align-items:center;gap:11px">
-<div style="position:relative;width:38px;height:38px;border-radius:10px;background:#0F766E"><div style="position:absolute;top:50%;left:50%;width:4px;height:18px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)"></div><div style="position:absolute;top:50%;left:50%;width:18px;height:4px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)"></div></div>
-<div style="font-family:'Sora';font-weight:700;font-size:15px;color:#fff;line-height:1.1">Veterinarios<br>por Venezuela</div>
-</div>
-<div style="display:flex;height:4px;width:60px;border-radius:2px;overflow:hidden;margin-top:14px"><span style="flex:1;background:#F8C13A"></span><span style="flex:1;background:#1f55a8"></span><span style="flex:1;background:#cf2b2b"></span></div>
-<p style="color:#86a59f;font-size:13.5px;margin-top:14px;max-width:260px">Red de emergencia coordinada por médicos veterinarios colegiados de Venezuela.</p>
-</div>
-<div><div style="font-family:'Sora';font-weight:700;font-size:14px;color:#fff;margin-bottom:13px">Plataforma</div><div style="display:flex;flex-direction:column;gap:9px">
-<span onClick="{{ goLost }}" style="font-size:14px;color:#a9c4be;cursor:pointer" style-hover="color:#fff">Mascotas Perdidas</span>
-<span onClick="{{ goFound }}" style="font-size:14px;color:#a9c4be;cursor:pointer" style-hover="color:#fff">Mascotas Encontradas</span>
-<span onClick="{{ goShelters }}" style="font-size:14px;color:#a9c4be;cursor:pointer" style-hover="color:#fff">Refugios Temporales</span>
-<span onClick="{{ goAdopt }}" style="font-size:14px;color:#a9c4be;cursor:pointer" style-hover="color:#fff">Adopciones</span>
-</div></div>
-<div><div style="font-family:'Sora';font-weight:700;font-size:14px;color:#fff;margin-bottom:13px">Contacto</div><div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:#a9c4be">
-<span>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="64051d1100052412011001160d0a05160d0b17140b1612010a011e110108054a070b09">[email&#160;protected]</a></span>
-<span>📞 0212-555-0142</span>
-<div style="display:flex;gap:9px;margin-top:6px"><span style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(255,255,255,.16)">📷</span><span style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(255,255,255,.16)">𝕏</span><span style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(255,255,255,.16)">📘</span></div>
-</div></div>
-<div><div style="font-family:'Sora';font-weight:700;font-size:14px;color:#fff;margin-bottom:13px">Emergencia 24/7</div>
-<p style="font-size:13.5px;color:#a9c4be;margin-bottom:12px">¿Un animal en peligro ahora mismo?</p>
-<button style="border:none;background:#25D366;color:#0a3a1c;font-weight:700;font-size:14.5px;padding:12px 16px;border-radius:11px;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;box-shadow:0 6px 16px rgba(37,211,102,.3)" style-hover="transform:translateY(-2px)">💬 WhatsApp de emergencia</button>
-</div>
-</div>
-<div style="border-top:1px solid rgba(255,255,255,.09)"><div style="max-width:1240px;margin:0 auto;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12.5px;color:#6f8d87"><span>© 2026 Veterinarios por Venezuela · Hecho con 🐾 en Venezuela</span><span>Términos · Privacidad</span></div></div>
+<footer>
+  <div class="foot">
+    <div>
+      <div class="blogo"><div class="lg"><div class="v"></div><div class="h"></div></div><b>Veterinarios<br>por Venezuela</b></div>
+      <div class="flag"><b></b><b></b><b></b></div>
+      <p class="desc">Red de emergencia coordinada por médicos veterinarios colegiados de Venezuela.</p>
+    </div>
+    <div>
+      <h4>Plataforma</h4>
+      <div class="flinks">
+        <span data-nav="lost">Mascotas Perdidas</span>
+        <span data-nav="found">Mascotas Encontradas</span>
+        <span data-nav="shelters">Refugios Temporales</span>
+        <span data-nav="adopt">Adopciones</span>
+      </div>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <div class="fcontact">
+        <span>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="47263e3223260731223322352e2926352e2834372835312229223d32222b266924282a">[email&#160;protected]</a></span>
+        <span>📞 0212-555-0142</span>
+        <div class="socials"><span>📷</span><span>𝕏</span><span>📘</span></div>
+      </div>
+    </div>
+    <div>
+      <h4>Emergencia 24/7</h4>
+      <p class="desc" style="margin-top:0;margin-bottom:12px">¿Un animal en peligro ahora mismo?</p>
+      <button class="wa-emerg">💬 WhatsApp de emergencia</button>
+    </div>
+  </div>
+  <div class="foot-bot"><div class="in"><span>© 2026 Veterinarios por Venezuela · Hecho con 🐾 en Venezuela</span><span>Términos · Privacidad</span></div></div>
 </footer>
 
-<!-- FLOATING ACTION BUTTON -->
-<sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ openFabReport }}" style="position:fixed;bottom:26px;right:26px;z-index:45;border:none;background:#F26B4E;color:#fff;font-weight:700;font-size:15px;padding:15px 22px;border-radius:999px;box-shadow:0 10px 30px rgba(242,107,78,.45);display:flex;align-items:center;gap:9px;transition:transform .15s" style-hover="transform:translateY(-3px) scale(1.03)">+ {{ fabLabel }}</button>
-</sc-if>
+<!-- FAB -->
+<button class="fab" id="fab" data-report="perdida">+ <span id="fabLabel">Reportar Mascota Perdida</span></button>
 
-<!-- ===================== REPORT MODAL ===================== -->
-<sc-if value="{{ reportOpen }}" hint-placeholder-val="{{ false }}">
-<div style="position:fixed;inset:0;z-index:60;background:rgba(16,49,45,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px;animation:vpvOverlay .2s ease both" onClick="{{ closeReport }}">
-<div onClick="{{ stop }}" style="background:#FAF7F2;border-radius:22px;width:100%;max-width:620px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 90px rgba(7,40,36,.5);animation:vpvSheet .28s cubic-bezier(.2,.8,.2,1) both">
-
-<!-- modal header + progress -->
-<div style="padding:20px 24px 0;flex-shrink:0">
-<div style="display:flex;align-items:center;justify-content:space-between">
-<div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;border-radius:10px;background:#0F766E;display:flex;align-items:center;justify-content:center;font-size:16px">📣</div><h3 style="font-family:'Sora';font-weight:700;font-size:18px;color:#163b37">Reportar una mascota</h3></div>
-<button onClick="{{ closeReport }}" style="width:34px;height:34px;border-radius:9px;border:none;background:#EDE7DC;color:#6b756f;font-size:17px;display:flex;align-items:center;justify-content:center" style-hover="background:#e2dace">✕</button>
-</div>
-<sc-if value="{{ notSuccess }}" hint-placeholder-val="{{ true }}">
-<div style="margin-top:18px">
-<div style="display:flex;justify-content:space-between;margin-bottom:8px">
-<sc-for list="{{ stepLabels }}" as="sl" hint-placeholder-count="5">
-<div style="flex:1;text-align:center;font-size:11.5px;font-weight:700;color:{{ sl.color }};letter-spacing:.02em">{{ sl.label }}</div>
-</sc-for>
-</div>
-<div style="height:7px;background:#EAE3D8;border-radius:999px;overflow:hidden"><div style="height:100%;width:{{ stepPct }}%;background:linear-gradient(90deg,#0F766E,#15a59a);border-radius:999px;transition:width .35s cubic-bezier(.4,0,.2,1)"></div></div>
-</div>
-</sc-if>
-</div>
-
-<!-- modal body -->
-<div style="padding:24px;overflow-y:auto;flex:1">
-
-<sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
-<div style="animation:vpvUp .25s ease both"><div style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37;margin-bottom:4px">¿Qué quieres reportar?</div><p style="color:#6b756f;font-size:14px;margin-bottom:18px">Selecciona el tipo de reporte.</p>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
-<div onClick="{{ pickLost }}" style="border:2px solid {{ lostSelBorder }};background:{{ lostSelBg }};border-radius:16px;padding:22px 18px;cursor:pointer;text-align:center;transition:all .15s">
-<div style="font-size:34px">🔴</div><div style="font-family:'Sora';font-weight:700;font-size:16px;color:#163b37;margin-top:8px">Mascota Perdida</div><div style="font-size:13px;color:#6b756f;margin-top:4px">Perdí a mi animal</div></div>
-<div onClick="{{ pickFound }}" style="border:2px solid {{ foundSelBorder }};background:{{ foundSelBg }};border-radius:16px;padding:22px 18px;cursor:pointer;text-align:center;transition:all .15s">
-<div style="font-size:34px">🟢</div><div style="font-family:'Sora';font-weight:700;font-size:16px;color:#163b37;margin-top:8px">Mascota Encontrada</div><div style="font-size:13px;color:#6b756f;margin-top:4px">Rescaté un animal</div></div>
-</div></div>
-</sc-if>
-
-<sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
-<div style="animation:vpvUp .25s ease both"><div style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37;margin-bottom:18px">Información del animal</div>
-<div style="display:flex;flex-direction:column;gap:13px">
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Nombre (si lo sabes)</label><input placeholder="Ej: Luna" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Especie</label><select style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;color:#5f6e6b;outline:none"><option>Perro</option><option>Gato</option><option>Otro</option></select></div></div>
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Raza</label><input placeholder="Mestizo, Labrador…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Color</label><input placeholder="Marrón y blanco" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div></div>
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:90px"><label style="font-size:13px;font-weight:600;color:#33403c">Tamaño</label><select style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;color:#5f6e6b;outline:none"><option>Pequeño</option><option>Mediano</option><option>Grande</option></select></div><div style="flex:1;min-width:90px"><label style="font-size:13px;font-weight:600;color:#33403c">Sexo</label><select style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;color:#5f6e6b;outline:none"><option>Macho</option><option>Hembra</option><option>No sé</option></select></div><div style="flex:1;min-width:90px"><label style="font-size:13px;font-weight:600;color:#33403c">Edad aprox.</label><input placeholder="2 años" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div></div>
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Descripción / señas particulares</label><textarea placeholder="Collar rojo, mancha en la oreja…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none;min-height:80px;resize:vertical"></textarea></div>
-</div></div>
-</sc-if>
-
-<sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
-<div style="animation:vpvUp .25s ease both"><div style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37;margin-bottom:18px">Ubicación y fecha</div>
-<div style="display:flex;flex-direction:column;gap:13px">
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Estado</label><select style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;color:#5f6e6b;outline:none"><option>Aragua</option><option>Carabobo</option><option>Miranda</option><option>Distrito Capital</option></select></div><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Ciudad / zona</label><input placeholder="Maracay, El Limón…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div></div>
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Referencia del lugar</label><input placeholder="Cerca de la plaza, sector…" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div>
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Fecha</label><input type="date" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:10px 13px;font-size:14.5px;color:#5f6e6b;outline:none"></div><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Hora aprox.</label><input type="time" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:10px 13px;font-size:14.5px;color:#5f6e6b;outline:none"></div></div>
-<div style="border:1px dashed #cfe0da;background:#f0f7f5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center"><span style="font-size:18px">📍</span><span style="font-size:13px;color:#3d7d63">Podrás ajustar la ubicación exacta en el mapa después de enviar.</span></div>
-</div></div>
-</sc-if>
-
-<sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
-<div style="animation:vpvUp .25s ease both"><div style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37;margin-bottom:4px">Tus datos de contacto</div><p style="color:#6b756f;font-size:14px;margin-bottom:18px">Para que la familia o nuestro equipo pueda comunicarse contigo.</p>
-<div style="display:flex;flex-direction:column;gap:13px">
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Nombre</label><input placeholder="Tu nombre" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div>
-<div style="display:flex;gap:11px;flex-wrap:wrap"><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">Teléfono</label><input placeholder="0414-1234567" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div><div style="flex:1;min-width:130px"><label style="font-size:13px;font-weight:600;color:#33403c">WhatsApp</label><input placeholder="0414-1234567" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div></div>
-<div><label style="font-size:13px;font-weight:600;color:#33403c">Correo (opcional)</label><input placeholder="tu@correo.com" style="width:100%;margin-top:5px;border:1.5px solid #E6DFD3;background:#fff;border-radius:10px;padding:11px 13px;font-size:14.5px;outline:none"></div>
-<label style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:#566159;cursor:pointer;margin-top:2px"><input type="checkbox" checked style="width:17px;height:17px;accent-color:#0F766E">Acepto que un veterinario revise y publique este reporte.</label>
-</div></div>
-</sc-if>
-
-<sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
-<div style="animation:vpvUp .25s ease both"><div style="font-family:'Sora';font-weight:700;font-size:17px;color:#163b37;margin-bottom:4px">Fotos del animal</div><p style="color:#6b756f;font-size:14px;margin-bottom:18px">Una buena foto multiplica las probabilidades de un reencuentro.</p>
-<div style="border:2px dashed #bcd6cf;background:#f0f7f5;border-radius:16px;padding:38px 20px;text-align:center;cursor:pointer;transition:all .15s" style-hover="background:#e7f2ef;border-color:#0F766E">
-<div style="font-size:42px">📸</div><div style="font-family:'Sora';font-weight:700;font-size:16px;color:#163b37;margin-top:10px">Arrastra tus fotos aquí</div><div style="font-size:13.5px;color:#6b756f;margin-top:4px">o haz clic para seleccionar · JPG, PNG hasta 10MB</div></div>
-<div style="display:flex;gap:10px;margin-top:14px">
-<div style="flex:1;height:74px;border-radius:11px;background:linear-gradient(140deg,#E3F0EE,#cfe6e2);display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.7">🐾</div>
-<div style="flex:1;height:74px;border:1.5px dashed #d9d2c7;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#bcb6aa;font-size:24px">+</div>
-<div style="flex:1;height:74px;border:1.5px dashed #d9d2c7;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#bcb6aa;font-size:24px">+</div>
-</div></div>
-</sc-if>
-
-<sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
-<div style="text-align:center;padding:18px 10px;animation:vpvUp .3s ease both">
-<div style="width:78px;height:78px;border-radius:50%;background:#e7f5ef;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto;animation:vpvPop .4s cubic-bezier(.2,.9,.3,1.3) both">✅</div>
-<h3 style="font-family:'Sora';font-weight:800;font-size:23px;color:#163b37;margin-top:18px">¡Reporte enviado!</h3>
-<p style="color:#566159;font-size:15px;margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto">Un médico veterinario de nuestra red revisará tu caso y lo publicará en breve. Te notificaremos por WhatsApp ante cualquier novedad.</p>
-<div style="background:#fff;border:1px solid #EDE7DC;border-radius:13px;padding:14px 18px;margin:22px auto 0;max-width:340px;display:flex;align-items:center;gap:12px;text-align:left"><span style="font-size:22px">🩺</span><div><div style="font-weight:700;font-size:13.5px;color:#33403c">En revisión veterinaria</div><div style="font-size:12.5px;color:#8a938d">Tiempo estimado: 1–3 horas</div></div></div>
-</div>
-</sc-if>
-
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div class="top">
+        <div class="ti"><div class="ic">📣</div><h3>Reportar una mascota</h3></div>
+        <button class="x" id="modalClose">✕</button>
+      </div>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="steplabels" id="stepLabels"></div>
+        <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- STEP 1 -->
+      <div class="mstep active" data-step="1">
+        <h4>¿Qué quieres reportar?</h4><div class="sub">Selecciona el tipo de reporte.</div>
+        <div class="typecards">
+          <div class="typecard" id="tcLost" data-type="perdida"><div class="em">🔴</div><b>Mascota Perdida</b><small>Perdí a mi animal</small></div>
+          <div class="typecard" id="tcFound" data-type="encontrada"><div class="em">🟢</div><b>Mascota Encontrada</b><small>Rescaté un animal</small></div>
+        </div>
+      </div>
+      <!-- STEP 2 -->
+      <div class="mstep" data-step="2">
+        <h4>Información del animal</h4>
+        <div class="fcol">
+          <div class="frow"><div><label>Nombre (si lo sabes)</label><input class="inp" placeholder="Ej: Luna"></div><div><label>Especie</label><select class="inp"><option>Perro</option><option>Gato</option><option>Otro</option></select></div></div>
+          <div class="frow"><div><label>Raza</label><input class="inp" placeholder="Mestizo, Labrador…"></div><div><label>Color</label><input class="inp" placeholder="Marrón y blanco"></div></div>
+          <div class="frow"><div><label>Tamaño</label><select class="inp"><option>Pequeño</option><option>Mediano</option><option>Grande</option></select></div><div><label>Sexo</label><select class="inp"><option>Macho</option><option>Hembra</option><option>No sé</option></select></div><div><label>Edad aprox.</label><input class="inp" placeholder="2 años"></div></div>
+          <div><label>Descripción / señas particulares</label><textarea class="inp" placeholder="Collar rojo, mancha en la oreja…"></textarea></div>
+        </div>
+      </div>
+      <!-- STEP 3 -->
+      <div class="mstep" data-step="3">
+        <h4>Ubicación y fecha</h4>
+        <div class="fcol">
+          <div class="frow"><div><label>Estado</label><select class="inp"><option>Aragua</option><option>Carabobo</option><option>Miranda</option><option>Distrito Capital</option></select></div><div><label>Ciudad / zona</label><input class="inp" placeholder="Maracay, El Limón…"></div></div>
+          <div><label>Referencia del lugar</label><input class="inp" placeholder="Cerca de la plaza, sector…"></div>
+          <div class="frow"><div><label>Fecha</label><input class="inp" type="date"></div><div><label>Hora aprox.</label><input class="inp" type="time"></div></div>
+          <div class="note"><span style="font-size:18px">📍</span><span>Podrás ajustar la ubicación exacta en el mapa después de enviar.</span></div>
+        </div>
+      </div>
+      <!-- STEP 4 -->
+      <div class="mstep" data-step="4">
+        <h4>Tus datos de contacto</h4><div class="sub">Para que la familia o nuestro equipo pueda comunicarse contigo.</div>
+        <div class="fcol">
+          <div><label>Nombre</label><input class="inp" placeholder="Tu nombre"></div>
+          <div class="frow"><div><label>Teléfono</label><input class="inp" placeholder="0414-1234567"></div><div><label>WhatsApp</label><input class="inp" placeholder="0414-1234567"></div></div>
+          <div><label>Correo (opcional)</label><input class="inp" placeholder="tu@correo.com"></div>
+          <label class="check"><input type="checkbox" checked>Acepto que un veterinario revise y publique este reporte.</label>
+        </div>
+      </div>
+      <!-- STEP 5 -->
+      <div class="mstep" data-step="5">
+        <h4>Fotos del animal</h4><div class="sub">Una buena foto multiplica las probabilidades de un reencuentro.</div>
+        <div class="dropzone" id="dropzone"><div class="em">📸</div><b>Arrastra tus fotos aquí</b><small>o haz clic para seleccionar · JPG, PNG hasta 10MB</small></div>
+        <div class="thumbs"><div class="thumb">🐾</div><div class="thumb empty">+</div><div class="thumb empty">+</div></div>
+      </div>
+      <!-- SUCCESS -->
+      <div class="mstep" data-step="6">
+        <div class="success">
+          <div class="circle">✅</div>
+          <h3>¡Reporte enviado!</h3>
+          <p>Un médico veterinario de nuestra red revisará tu caso y lo publicará en breve. Te notificaremos por WhatsApp ante cualquier novedad.</p>
+          <div class="info"><span style="font-size:22px">🩺</span><div><div style="font-weight:700;font-size:13.5px;color:#33403c">En revisión veterinaria</div><div style="font-size:12.5px;color:#8a938d">Tiempo estimado: 1–3 horas</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" id="modalFoot">
+      <button class="m-back" id="mBack">← Atrás</button>
+      <div class="m-count" id="mCount">Paso 1 de 5</div>
+      <button class="m-next" id="mNext">Siguiente →</button>
+    </div>
+  </div>
 </div>
 
-<!-- modal footer -->
-<div style="padding:16px 24px;border-top:1px solid #EDE7DC;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff">
-<sc-if value="{{ notSuccess }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ prevStep }}" style="border:1.5px solid {{ backBorder }};background:#fff;color:{{ backColor }};font-weight:600;font-size:14.5px;padding:11px 18px;border-radius:11px;visibility:{{ backVis }}" style-hover="background:#FCFAF6">← Atrás</button>
-<div style="font-size:13px;color:#9aa49f;font-weight:600">Paso {{ step }} de 5</div>
-<button onClick="{{ nextStep }}" style="border:none;background:#0F766E;color:#fff;font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:11px;box-shadow:0 5px 14px rgba(15,118,110,.3)" style-hover="background:#0c5f59">{{ nextLabel }}</button>
-</sc-if>
-<sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ goHomeFromModal }}" style="flex:1;border:1.5px solid #E6DFD3;background:#fff;color:#566159;font-weight:600;font-size:14.5px;padding:12px;border-radius:11px" style-hover="background:#FCFAF6">Ir al inicio</button>
-<button onClick="{{ closeReport }}" style="flex:1;border:none;background:#0F766E;color:#fff;font-weight:700;font-size:14.5px;padding:12px;border-radius:11px" style-hover="background:#0c5f59">Listo</button>
-</sc-if>
-</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function(){
+  "use strict";
+  var TINTS=[['#E3F0EE','#cfe6e2'],['#FBE7E0','#f6d3c8'],['#F1ECE0','#e5dcc9'],['#E7EAF4','#d6dcee'],['#E6F1E9','#d2e6d9'],['#F3E8F1','#e6d4e2']];
+  function tint(i){return TINTS[i%TINTS.length];}
+  function el(id){return document.getElementById(id);}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-</div>
-</div>
-</sc-if>
+  /* ---------- DATA ---------- */
+  var lostData=[
+    {name:'Luna',species:'Perro',sk:'perro',breed:'Mestizo mediano',location:'Maracay, Aragua',time:'hace 2 horas'},
+    {name:'Michi',species:'Gato',sk:'gato',breed:'Criollo atigrado',location:'Valencia, Carabobo',time:'hace 5 horas'},
+    {name:'Rocky',species:'Perro',sk:'perro',breed:'Labrador chocolate',location:'El Limón, Aragua',time:'hace 1 día'},
+    {name:'Pelusa',species:'Gato',sk:'gato',breed:'Siamés',location:'Petare, Caracas',time:'hace 3 horas'},
+    {name:'Max',species:'Perro',sk:'perro',breed:'Pitbull marrón',location:'Los Teques, Miranda',time:'hace 6 horas'},
+    {name:'Nina',species:'Perro',sk:'perro',breed:'Poodle blanco',location:'Maracay, Aragua',time:'hace 2 días'}
+  ];
+  var foundData=[
+    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Mestizo marrón',location:'La Victoria, Aragua',time:'hace 1 hora',status:'En mi casa',sicon:'🏠'},
+    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Negro, ojos verdes',location:'El Limón, Aragua',time:'hace 4 horas',status:'En refugio',sicon:'🏠'},
+    {name:'Cachorro',species:'Perro',sk:'perro',breed:'Mestizo, ~3 meses',location:'Maracay, Aragua',time:'hace 7 horas',status:'En mi casa',sicon:'🏠'},
+    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Pastor, collar azul',location:'Valencia, Carabobo',time:'hace 9 horas',status:'En veterinaria',sicon:'🩺'},
+    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Atigrada gris',location:'Caracas',time:'hace 12 horas',status:'En mi casa',sicon:'🏠'},
+    {name:'Pequeño',species:'Perro',sk:'perro',breed:'Blanco pequeño',location:'Turmero, Aragua',time:'hace 1 día',status:'En refugio',sicon:'🏠'}
+  ];
+  var shelters=[
+    {name:'Refugio El Limón',addr:'El Limón, Maracay · Aragua',dogN:18,dogMax:25,catN:12,catMax:20,services:[['🍖','Comida'],['🩺','Veterinario'],['🚐','Transporte']],full:false},
+    {name:'Casa Esperanza Animal',addr:'Av. Bolívar · Valencia, Carabobo',dogN:30,dogMax:30,catN:8,catMax:15,services:[['🍖','Comida'],['🏡','Hogar Temporal']],full:true},
+    {name:'Patitas de Maracay',addr:'Sector Centro · Maracay, Aragua',dogN:9,dogMax:15,catN:14,catMax:18,services:[['🍖','Comida'],['🩺','Veterinario'],['🏡','Hogar Temporal']],full:false},
+    {name:'Albergue San Francisco',addr:'El Valle · Caracas',dogN:22,dogMax:40,catN:25,catMax:30,services:[['🍖','Comida'],['🩺','Veterinario'],['🚐','Transporte'],['🏡','Hogar Temporal']],full:false}
+  ];
+  var adoptData=[
+    {name:'Canela',age:'2 años',size:'Mediano',health:'Sano',status:'DISPONIBLE'},
+    {name:'Simón',age:'6 meses',size:'Pequeño',health:'En tratamiento',status:'EN PROCESO'},
+    {name:'Maya',age:'4 años',size:'Grande',health:'Sano',status:'DISPONIBLE'},
+    {name:'Toby',age:'1 año',size:'Mediano',health:'Sano',status:'ADOPTADO'},
+    {name:'Nube',age:'3 años',size:'Pequeño',health:'Sano',status:'DISPONIBLE'},
+    {name:'Coco',age:'8 meses',size:'Mediano',health:'Recuperándose',status:'EN PROCESO'}
+  ];
+  var vetReqs=[
+    {id:1,applicant:'María González',city:'Maracay, Aragua',animal:'Canela',date:'24 jun',state:'pending'},
+    {id:2,applicant:'José Rodríguez',city:'Valencia, Carabobo',animal:'Maya',date:'23 jun',state:'pending'},
+    {id:3,applicant:'Ana Pérez',city:'Los Teques, Miranda',animal:'Nube',date:'23 jun',state:'review'},
+    {id:4,applicant:'Luis Martínez',city:'El Limón, Aragua',animal:'Simón',date:'22 jun',state:'pending'},
+    {id:5,applicant:'Carmen Díaz',city:'Caracas',animal:'Coco',date:'21 jun',state:'review'}
+  ];
+  var features=[
+    {dot:'🔴',title:'Mascotas Perdidas',desc:'Reporta y busca animales extraviados durante la emergencia.',cta:'Ver perdidas',tint:'#fdecec',accent:'#DC4A4A',nav:'lost'},
+    {dot:'🟢',title:'Mascotas Encontradas',desc:'Registra un animal que rescataste para hallar a su familia.',cta:'Ver encontradas',tint:'#e7f5ef',accent:'#2F9E63',nav:'found'},
+    {dot:'🏠',title:'Refugios Temporales',desc:'Ubica albergues con cupo y servicios veterinarios cercanos.',cta:'Ver refugios',tint:'#E3F0EE',accent:'#0F766E',nav:'shelters'},
+    {dot:'💜',title:'Adopciones',desc:'Animales revisados por veterinarios, listos para un nuevo hogar.',cta:'Ver adopciones',tint:'#F3E8F1',accent:'#7E5BD0',nav:'adopt'}
+  ];
+  var howSteps=[
+    {num:'01',icon:'📝',title:'Reportas',desc:'Cargas la información y fotos del animal en pocos minutos, desde tu teléfono.',tint:'#fdecec'},
+    {num:'02',icon:'🩺',title:'Un veterinario revisa',desc:'Nuestro equipo verifica y valida cada caso antes de publicarlo.',tint:'#E3F0EE'},
+    {num:'03',icon:'💚',title:'Reencuentro o adopción',desc:'Coordinamos el reencuentro con la familia o una adopción responsable.',tint:'#e7f5ef'}
+  ];
+  var values=[
+    {icon:'🩺',title:'Liderazgo veterinario',desc:'Cada decisión clínica y cada caso pasa por médicos veterinarios colegiados.',tint:'#E3F0EE'},
+    {icon:'🤝',title:'Comunidad resiliente',desc:'Voluntarios, rescatistas y familias venezolanas trabajando en red.',tint:'#fdecec'},
+    {icon:'🛡️',title:'Adopción responsable',desc:'Acompañamos cada adopción para garantizar el bienestar del animal.',tint:'#F3E8F1'}
+  ];
+  var vetAnimals=[
+    {name:'Canela',meta:'Perro · 2 años',status:'En adopción',s:'adopt'},
+    {name:'Simón',meta:'Perro · 6 meses',status:'En tratamiento',s:'treat'},
+    {name:'Maya',meta:'Perro · 4 años',status:'En adopción',s:'adopt'},
+    {name:'Pelusa',meta:'Gato · perdido',status:'Buscando familia',s:'lost'}
+  ];
 
-</div>
-</x-dc>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script>
-class Component extends DCLogic {
-  state = {
-    view: 'home',
-    reportOpen: false,
-    reportType: 'perdida',
-    step: 1,
-    lostSpecies: 'todos',
-    foundSpecies: 'todos',
-    adoptTab: 'list',
-    vetReqs: [
-      { id:1, applicant:'María González', city:'Maracay, Aragua', animal:'Canela', date:'24 jun', status:'Pendiente', state:'pending' },
-      { id:2, applicant:'José Rodríguez', city:'Valencia, Carabobo', animal:'Maya', date:'23 jun', status:'Pendiente', state:'pending' },
-      { id:3, applicant:'Ana Pérez', city:'Los Teques, Miranda', animal:'Nube', date:'23 jun', status:'En revisión', state:'review' },
-      { id:4, applicant:'Luis Martínez', city:'El Limón, Aragua', animal:'Simón', date:'22 jun', status:'Pendiente', state:'pending' },
-      { id:5, applicant:'Carmen Díaz', city:'Caracas', animal:'Coco', date:'21 jun', status:'En revisión', state:'review' },
-    ],
-  };
+  /* ---------- RENDER: home ---------- */
+  function gradient(i){var t=tint(i);return 'linear-gradient(140deg,'+t[0]+','+t[1]+')';}
 
-  go(view) {
-    this.setState({ view });
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
+  el('featGrid').innerHTML=features.map(function(f){
+    return '<div class="feat" data-nav="'+f.nav+'">'
+      +'<span class="paww">🐾</span>'
+      +'<div class="ic" style="background:'+f.tint+'">'+f.dot+'</div>'
+      +'<h3>'+f.title+'</h3><p>'+f.desc+'</p>'
+      +'<div class="go" style="color:'+f.accent+'">'+f.cta+' →</div></div>';
+  }).join('');
+
+  el('howGrid').innerHTML=howSteps.map(function(s){
+    return '<div class="step"><div class="top"><div class="ic" style="background:'+s.tint+'">'+s.icon+'</div><span class="num">'+s.num+'</span></div>'
+      +'<h3>'+s.title+'</h3><p>'+s.desc+'</p></div>';
+  }).join('');
+
+  var latest=[
+    {d:lostData[0],type:'lost'},{d:foundData[0],type:'found'},{d:lostData[3],type:'lost'},{d:foundData[3],type:'found'},{d:lostData[1],type:'lost'}
+  ];
+  el('latestStrip').innerHTML=latest.map(function(o,i){
+    var p=o.d, isLost=o.type==='lost';
+    var bClass=isLost?'lost':'found', bTxt=isLost?'🔴 PERDIDO':'🟢 ENCONTRADO';
+    return '<div class="mini"><div class="photo" style="background:'+gradient(isLost?i:i+1)+'">'
+      +'<span class="pw">🐾</span><span class="badge '+bClass+'">'+bTxt+'</span>'
+      +'<span class="mono" style="position:absolute;bottom:7px;right:9px;font-size:9.5px">foto · '+p.sk+'</span></div>'
+      +'<div class="body"><div class="name">'+(isLost?p.name:'Encontrado')+'</div>'
+      +'<div style="font-size:12.5px;color:#8a938d">'+p.breed+'</div>'
+      +'<div class="meta" style="margin-top:9px">📍 '+p.location+'</div>'
+      +'<div class="meta t">🕒 '+p.time+'</div></div></div>';
+  }).join('');
+
+  el('valuesGrid').innerHTML=values.map(function(v){
+    return '<div class="value"><div class="ic" style="background:'+v.tint+'">'+v.icon+'</div><h3>'+v.title+'</h3><p>'+v.desc+'</p></div>';
+  }).join('');
+
+  /* ---------- RENDER: pet galleries ---------- */
+  function petCardHTML(p,i,type){
+    var isLost=type==='lost';
+    var badge=isLost?'<span class="badge lost">🔴 PERDIDO</span>':'<span class="badge found">🟢 ENCONTRADO</span>';
+    var statusChip=isLost?'':'<span class="statuschip">'+p.sicon+' '+p.status+'</span>';
+    var photoLbl='<span class="mono" style="position:absolute;bottom:8px;right:11px;font-size:10px">foto · '+p.sk+'</span>';
+    return '<div class="pet"><div class="photo" style="background:'+gradient(isLost?i:i+1)+'">'
+      +'<span class="pw">🐾</span>'+badge+statusChip+(isLost?photoLbl:'')+'</div>'
+      +'<div class="body"><div class="title"><div class="pname">'+esc(p.name)+'</div><span class="sp">'+p.species+'</span></div>'
+      +'<div class="breed">'+esc(p.breed)+'</div>'
+      +'<div class="meta">📍 '+esc(p.location)+'</div>'
+      +'<div class="meta t">🕒 '+p.time+'</div>'
+      +'<div class="actions"><button class="act call">📞 Llamar</button><button class="act wa">💬 WhatsApp</button></div>'
+      +'<button class="share">🔗 Compartir</button></div></div>';
   }
-
-  openReport(type) {
-    this.setState({ reportOpen: true, reportType: type, step: type === 'choose' ? 1 : 1 });
+  function chipsHTML(active){
+    var defs=[['todos','Todos'],['perro','🐕 Perro'],['gato','🐈 Gato'],['otro','Otro']];
+    return defs.map(function(d){
+      var on=active===d[0];
+      return '<button class="chip teal'+(on?' active':'')+'" data-sp="'+d[0]+'">'+d[1]+'</button>';
+    }).join('');
   }
-
-  initials(name) {
-    return name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+  var lostFilter='todos', foundFilter='todos';
+  function renderLost(){
+    var list=lostFilter==='todos'?lostData:lostData.filter(function(p){return p.sk===lostFilter;});
+    el('lostChips').innerHTML=chipsHTML(lostFilter);
+    el('lostGrid').innerHTML=list.map(function(p,i){return petCardHTML(p,i,'lost');}).join('');
+    el('lostCount').textContent=list.length+' resultados';
   }
-
-  renderVals() {
-    const v = this.state.view;
-    const TEAL='#0F766E', CORAL='#F26B4E', LOST='#DC4A4A', FOUND='#2F9E63', ADOPT='#7E5BD0';
-    const tints = [['#E3F0EE','#cfe6e2'],['#FBE7E0','#f6d3c8'],['#F1ECE0','#e5dcc9'],['#E7EAF4','#d6dcee'],['#E6F1E9','#d2e6d9'],['#F3E8F1','#e6d4e2']];
-    const tint = i => tints[i % tints.length];
-
-    // ---- nav ----
-    const navDefs = [
-      { label:'Inicio', key:'home' },
-      { label:'Mascotas Perdidas', key:'lost' },
-      { label:'Mascotas Encontradas', key:'found' },
-      { label:'Refugios', key:'shelters' },
-      { label:'Adopciones', key:'adopt' },
-      { label:'Quiénes Somos', key:'about' },
-    ];
-    const nav = navDefs.map(n => ({
-      label:n.label,
-      go:() => this.go(n.key),
-      color: v===n.key ? TEAL : '#566159',
-      weight: v===n.key ? 700 : 600,
-      bg: v===n.key ? '#E9F2F0' : 'transparent',
-    }));
-
-    // ---- lost data ----
-    const lostData = [
-      { id:1, name:'Luna', species:'Perro', sk:'perro', breed:'Mestizo mediano', location:'Maracay, Aragua', time:'hace 2 horas' },
-      { id:2, name:'Michi', species:'Gato', sk:'gato', breed:'Criollo atigrado', location:'Valencia, Carabobo', time:'hace 5 horas' },
-      { id:3, name:'Rocky', species:'Perro', sk:'perro', breed:'Labrador chocolate', location:'El Limón, Aragua', time:'hace 1 día' },
-      { id:4, name:'Pelusa', species:'Gato', sk:'gato', breed:'Siamés', location:'Petare, Caracas', time:'hace 3 horas' },
-      { id:5, name:'Max', species:'Perro', sk:'perro', breed:'Pitbull marrón', location:'Los Teques, Miranda', time:'hace 6 horas' },
-      { id:6, name:'Nina', species:'Perro', sk:'perro', breed:'Poodle blanco', location:'Maracay, Aragua', time:'hace 2 días' },
-    ].map((p,i) => ({ ...p, ta:tint(i)[0], tb:tint(i)[1], photoLabel:'foto · ' + p.sk }));
-
-    const foundData = [
-      { id:1, name:'Sin nombre', species:'Perro', sk:'perro', breed:'Mestizo marrón', location:'La Victoria, Aragua', time:'hace 1 hora', status:'En mi casa', statusIcon:'🏠' },
-      { id:2, name:'Sin nombre', species:'Gato', sk:'gato', breed:'Negro, ojos verdes', location:'El Limón, Aragua', time:'hace 4 horas', status:'En refugio', statusIcon:'🏠' },
-      { id:3, name:'Cachorro', species:'Perro', sk:'perro', breed:'Mestizo, ~3 meses', location:'Maracay, Aragua', time:'hace 7 horas', status:'En mi casa', statusIcon:'🏠' },
-      { id:4, name:'Sin nombre', species:'Perro', sk:'perro', breed:'Pastor, collar azul', location:'Valencia, Carabobo', time:'hace 9 horas', status:'En veterinaria', statusIcon:'🩺' },
-      { id:5, name:'Sin nombre', species:'Gato', sk:'gato', breed:'Atigrada gris', location:'Caracas', time:'hace 12 horas', status:'En mi casa', statusIcon:'🏠' },
-      { id:6, name:'Pequeño', species:'Perro', sk:'perro', breed:'Blanco pequeño', location:'Turmero, Aragua', time:'hace 1 día', status:'En refugio', statusIcon:'🏠' },
-    ].map((p,i) => ({ ...p, ta:tint(i+1)[0], tb:tint(i+1)[1], photoLabel:'foto · ' + p.sk }));
-
-    const filteredLost = this.state.lostSpecies==='todos' ? lostData : lostData.filter(p=>p.sk===this.state.lostSpecies);
-    const filteredFound = this.state.foundSpecies==='todos' ? foundData : foundData.filter(p=>p.sk===this.state.foundSpecies);
-
-    const mkChips = (current, setter) => {
-      const defs=[{k:'todos',l:'Todos'},{k:'perro',l:'🐕 Perro'},{k:'gato',l:'🐈 Gato'},{k:'otro',l:'Otro'}];
-      return defs.map(d=>({
-        label:d.l,
-        go:()=>setter(d.k),
-        border: current===d.k ? TEAL : '#E6DFD3',
-        bg: current===d.k ? TEAL : '#fff',
-        color: current===d.k ? '#fff' : '#566159',
-      }));
-    };
-
-    // ---- shelters ----
-    const cap = (n,max) => { const pct=Math.round(n/max*100); return { pct, color: pct>=100?LOST:(pct>=80?CORAL:TEAL) }; };
-    const sv = (icon,label)=>({icon,label});
-    const sheltersRaw = [
-      { name:'Refugio El Limón', address:'El Limón, Maracay · Aragua', dogN:18,dogMax:25, catN:12,catMax:20, services:[sv('🍖','Comida'),sv('🩺','Veterinario'),sv('🚐','Transporte')], st:'open' },
-      { name:'Casa Esperanza Animal', address:'Av. Bolívar · Valencia, Carabobo', dogN:30,dogMax:30, catN:8,catMax:15, services:[sv('🍖','Comida'),sv('🏡','Hogar Temporal')], st:'full' },
-      { name:'Patitas de Maracay', address:'Sector Centro · Maracay, Aragua', dogN:9,dogMax:15, catN:14,catMax:18, services:[sv('🍖','Comida'),sv('🩺','Veterinario'),sv('🏡','Hogar Temporal')], st:'open' },
-      { name:'Albergue San Francisco', address:'El Valle · Caracas', dogN:22,dogMax:40, catN:25,catMax:30, services:[sv('🍖','Comida'),sv('🩺','Veterinario'),sv('🚐','Transporte'),sv('🏡','Hogar Temporal')], st:'open' },
-    ];
-    const shelters = sheltersRaw.map(s=>{
-      const d=cap(s.dogN,s.dogMax), c=cap(s.catN,s.catMax);
-      const full = s.st==='full';
-      return { ...s, dogPct:d.pct, dogColor:d.color, catPct:c.pct, catColor:c.color,
-        statusLabel: full?'Cupo lleno':'Cupo disponible',
-        statusBg: full?'#fdecec':'#e7f5ef', statusColor: full?LOST:'#1b7a55' };
-    });
-
-    // ---- adoptions ----
-    const sizeIcon = s => s==='Pequeño'?'🐾':(s==='Mediano'?'🐕':'🐕‍🦺');
-    const healthStyle = h => h==='Sano' ? {bg:'#e7f5ef',color:'#1b7a55'} : {bg:'#fdf3e7',color:'#b5781f'};
-    const stStyle = s => s==='DISPONIBLE'?ADOPT:(s==='EN PROCESO'?'#C58B2A':'#8a938d');
-    const adoptRaw = [
-      { name:'Canela', age:'2 años', size:'Mediano', health:'Sano', status:'DISPONIBLE' },
-      { name:'Simón', age:'6 meses', size:'Pequeño', health:'En tratamiento', status:'EN PROCESO' },
-      { name:'Maya', age:'4 años', size:'Grande', health:'Sano', status:'DISPONIBLE' },
-      { name:'Toby', age:'1 año', size:'Mediano', health:'Sano', status:'ADOPTADO' },
-      { name:'Nube', age:'3 años', size:'Pequeño', health:'Sano', status:'DISPONIBLE' },
-      { name:'Coco', age:'8 meses', size:'Mediano', health:'Recuperándose', status:'EN PROCESO' },
-    ];
-    const adoptions = adoptRaw.map((a,i)=>{
-      const hs=healthStyle(a.health);
-      return { ...a, ta:tint(i)[0], tb:tint(i)[1], photoLabel:'foto · adopción',
-        sizeIcon:sizeIcon(a.size), healthBg:hs.bg, healthColor:hs.color, statusColor:stStyle(a.status),
-        apply:()=>this.setState({ adoptTab:'apply' }) };
-    });
-
-    const adoptStep = (n,t,d)=>({n,t,d});
-    const adoptSteps = [
-      adoptStep(1,'Solicitud','Completas el formulario con tus datos y los de tu hogar.'),
-      adoptStep(2,'Revisión veterinaria','Un MV evalúa la compatibilidad y agenda una entrevista.'),
-      adoptStep(3,'Entrega responsable','Firmas el compromiso de adopción y recibes seguimiento.'),
-    ];
-
-    // ---- vet dashboard ----
-    const reqColors = st => st==='pending' ? {bg:'#fdeee9',color:'#c4562f'} : (st==='review'?{bg:'#eaf0fb',color:'#3a5fb0'}:(st==='approved'?{bg:'#e7f5ef',color:'#1b7a55'}:{bg:'#fdecec',color:LOST}));
-    const avColors = [['#E3F0EE','#0F766E'],['#FBE7E0','#c4562f'],['#E7EAF4','#3a5fb0'],['#F3E8F1','#7E5BD0'],['#E6F1E9','#1b7a55']];
-    const vetReqs = this.state.vetReqs.map((r,i)=>{
-      const rc=reqColors(r.state);
-      const actionable = r.state==='pending' || r.state==='review';
-      return { ...r,
-        initials:this.initials(r.applicant),
-        avBg:avColors[i%avColors.length][0], avColor:avColors[i%avColors.length][1],
-        stBg:rc.bg, stColor:rc.color,
-        actionable,
-        resolved: !actionable,
-        resolvedLabel: r.state==='approved' ? '✓ Aprobada' : '✕ Rechazada',
-        approve:()=>this.resolveReq(r.id,'approved'),
-        reject:()=>this.resolveReq(r.id,'rejected'),
-      };
-    });
-    const pendingCount = this.state.vetReqs.filter(r=>r.state==='pending'||r.state==='review').length;
-
-    const vetStat = (icon,n,l,tint,delta,dc)=>({icon,n,l,tint,delta,deltaColor:dc});
-    const vetStats = [
-      vetStat('🐾',142,'Animales registrados','#E3F0EE','+12 hoy','#1b7a55'),
-      vetStat('📥',pendingCount,'Solicitudes pendientes','#fdeee9','Requiere acción','#c4562f'),
-      vetStat('💜',67,'Adopciones completadas','#F3E8F1','+5 esta semana','#1b7a55'),
-      vetStat('🏠',9,'Refugios coordinados','#E6F1E9','3 con cupo','#8a938d'),
-    ];
-
-    const vetMenuDefs = [
-      { icon:'📊', label:'Panel', badge:'', active:true },
-      { icon:'📥', label:'Solicitudes', badge:String(pendingCount), active:false },
-      { icon:'🐾', label:'Animales', badge:'', active:false },
-      { icon:'🏠', label:'Refugios', badge:'', active:false },
-      { icon:'⚙️', label:'Configuración', badge:'', active:false },
-    ];
-    const vetMenu = vetMenuDefs.map(m=>({
-      icon:m.icon, label:m.label,
-      badge: m.badge ? m.badge : '',
-      color: m.active ? '#fff' : '#a9d8d1',
-      bg: m.active ? '#0F766E' : 'transparent',
-      weight: m.active ? 700 : 500,
-    }));
-
-    const vetAnimals = [
-      { name:'Canela', meta:'Perro · 2 años', status:'En adopción', s:'adopt' },
-      { name:'Simón', meta:'Perro · 6 meses', status:'En tratamiento', s:'treat' },
-      { name:'Maya', meta:'Perro · 4 años', status:'En adopción', s:'adopt' },
-      { name:'Pelusa', meta:'Gato · perdido', status:'Buscando familia', s:'lost' },
-    ].map((a,i)=>{
-      const m = a.s==='adopt'?{bg:'#F3E8F1',color:'#7E5BD0'}:(a.s==='treat'?{bg:'#fdf3e7',color:'#b5781f'}:{bg:'#fdecec',color:LOST});
-      return { ...a, ta:tint(i)[0], tb:tint(i)[1], stBg:m.bg, stColor:m.color };
-    });
-
-    // ---- features / steps / about ----
-    const features = [
-      { dot:'🔴', title:'Mascotas Perdidas', desc:'Reporta y busca animales extraviados durante la emergencia.', cta:'Ver perdidas', tint:'#fdecec', accent:LOST, go:()=>this.go('lost') },
-      { dot:'🟢', title:'Mascotas Encontradas', desc:'Registra un animal que rescataste para hallar a su familia.', cta:'Ver encontradas', tint:'#e7f5ef', accent:FOUND, go:()=>this.go('found') },
-      { dot:'🏠', title:'Refugios Temporales', desc:'Ubica albergues con cupo y servicios veterinarios cercanos.', cta:'Ver refugios', tint:'#E3F0EE', accent:TEAL, go:()=>this.go('shelters') },
-      { dot:'💜', title:'Adopciones', desc:'Animales revisados por veterinarios, listos para un nuevo hogar.', cta:'Ver adopciones', tint:'#F3E8F1', accent:ADOPT, go:()=>this.go('adopt') },
-    ];
-    const steps = [
-      { num:'01', icon:'📝', title:'Reportas', desc:'Cargas la información y fotos del animal en pocos minutos, desde tu teléfono.', tint:'#fdecec' },
-      { num:'02', icon:'🩺', title:'Un veterinario revisa', desc:'Nuestro equipo verifica y valida cada caso antes de publicarlo.', tint:'#E3F0EE' },
-      { num:'03', icon:'💚', title:'Reencuentro o adopción', desc:'Coordinamos el reencuentro con la familia o una adopción responsable.', tint:'#e7f5ef' },
-    ];
-    const heroStats = [ {n:'480+',l:'Animales atendidos'}, {n:'210',l:'Reencuentros'}, {n:'64',l:'Veterinarios en red'} ];
-    const aboutStats = [ {n:'480+',l:'Animales atendidos'}, {n:'210',l:'Reencuentros logrados'}, {n:'67',l:'Adopciones'}, {n:'64',l:'Veterinarios colegiados'} ];
-    const values = [
-      { icon:'🩺', title:'Liderazgo veterinario', desc:'Cada decisión clínica y cada caso pasa por médicos veterinarios colegiados.', tint:'#E3F0EE' },
-      { icon:'🤝', title:'Comunidad resiliente', desc:'Voluntarios, rescatistas y familias venezolanas trabajando en red.', tint:'#fdecec' },
-      { icon:'🛡️', title:'Adopción responsable', desc:'Acompañamos cada adopción para garantizar el bienestar del animal.', tint:'#F3E8F1' },
-    ];
-
-    // latest strip (mixed)
-    const latest = [
-      { ...lostData[0], badgeColor:LOST, badgeIcon:'🔴', badgeText:'PERDIDO' },
-      { ...foundData[0], name:'Encontrado', badgeColor:FOUND, badgeIcon:'🟢', badgeText:'ENCONTRADO' },
-      { ...lostData[3], badgeColor:LOST, badgeIcon:'🔴', badgeText:'PERDIDO' },
-      { ...foundData[3], name:'Encontrado', badgeColor:FOUND, badgeIcon:'🟢', badgeText:'ENCONTRADO' },
-      { ...lostData[1], badgeColor:LOST, badgeIcon:'🔴', badgeText:'PERDIDO' },
-    ];
-
-    // ---- report modal ----
-    const step = this.state.step;
-    const stepPct = Math.round((step/5)*100);
-    const stepLabels = ['Tipo','Animal','Ubicación','Contacto','Foto'].map((label,i)=>({
-      label, color: (i+1)<=step ? TEAL : '#bcb6aa',
-    }));
-
-    return {
-      // nav + routing
-      nav,
-      isHome: v==='home', isLost: v==='lost', isFound: v==='found',
-      isShelters: v==='shelters', isAdopt: v==='adopt', isAbout: v==='about', isVet: v==='vet',
-      goHome:()=>this.go('home'), goLost:()=>this.go('lost'), goFound:()=>this.go('found'),
-      goShelters:()=>this.go('shelters'), goAdopt:()=>this.go('adopt'), goVet:()=>this.go('vet'),
-
-      // report triggers
-      openLostReport:()=>this.openReport('perdida'),
-      openFoundReport:()=>this.setState({reportOpen:true,reportType:'encontrada',step:1}),
-      openFabReport:()=>this.openReport('perdida'),
-
-      // home content
-      features, steps, heroStats, latest,
-
-      // lost
-      lostChips: mkChips(this.state.lostSpecies, k=>this.setState({lostSpecies:k})),
-      filteredLost, lostCount: filteredLost.length,
-      foundChips: mkChips(this.state.foundSpecies, k=>this.setState({foundSpecies:k})),
-      filteredFound, foundCount: filteredFound.length,
-
-      // shelters
-      shelters,
-
-      // adoptions
-      adoptions, adoptSteps,
-      isAdoptList: this.state.adoptTab==='list', isAdoptApply: this.state.adoptTab==='apply',
-      tabList:()=>this.setState({adoptTab:'list'}), tabApply:()=>this.setState({adoptTab:'apply'}),
-      tabListBg: this.state.adoptTab==='list'?'#fff':'transparent',
-      tabListColor: this.state.adoptTab==='list'?ADOPT:'#7a857f',
-      tabListShadow: this.state.adoptTab==='list'?'0 2px 8px rgba(28,43,42,.1)':'none',
-      tabApplyBg: this.state.adoptTab==='apply'?'#fff':'transparent',
-      tabApplyColor: this.state.adoptTab==='apply'?ADOPT:'#7a857f',
-      tabApplyShadow: this.state.adoptTab==='apply'?'0 2px 8px rgba(28,43,42,.1)':'none',
-
-      // about
-      values, aboutStats,
-
-      // vet
-      vetReqs, vetStats, vetMenu, vetAnimals, pendingCount,
-
-      // fab
-      showFab: v==='lost' || v==='found',
-      fabLabel: v==='found' ? 'Reportar Mascota Encontrada' : 'Reportar Mascota Perdida',
-
-      // modal
-      reportOpen: this.state.reportOpen,
-      closeReport:()=>this.setState({reportOpen:false}),
-      stop:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); },
-      step, stepPct, stepLabels,
-      isStep1: step===1, isStep2: step===2, isStep3: step===3, isStep4: step===4, isStep5: step===5,
-      isSuccess: step===6, notSuccess: step<=5,
-      nextLabel: step===5 ? 'Enviar reporte ✓' : 'Siguiente →',
-      nextStep:()=>this.setState(s=>({ step: Math.min(s.step+1, 6) })),
-      prevStep:()=>this.setState(s=>({ step: Math.max(s.step-1, 1) })),
-      backVis: step===1 ? 'hidden' : 'visible',
-      backBorder:'#E6DFD3', backColor:'#566159',
-      goHomeFromModal:()=>{ this.setState({reportOpen:false}); this.go('home'); },
-
-      // step 1 selection
-      pickLost:()=>this.setState({reportType:'perdida'}),
-      pickFound:()=>this.setState({reportType:'encontrada'}),
-      lostSelBorder: this.state.reportType==='perdida'?LOST:'#EDE7DC',
-      lostSelBg: this.state.reportType==='perdida'?'#fdf3f2':'#fff',
-      foundSelBorder: this.state.reportType==='encontrada'?FOUND:'#EDE7DC',
-      foundSelBg: this.state.reportType==='encontrada'?'#f0f8f3':'#fff',
-    };
+  function renderFound(){
+    var list=foundFilter==='todos'?foundData:foundData.filter(function(p){return p.sk===foundFilter;});
+    el('foundChips').innerHTML=chipsHTML(foundFilter);
+    el('foundGrid').innerHTML=list.map(function(p,i){return petCardHTML(p,i,'found');}).join('');
+    el('foundCount').textContent=list.length+' resultados';
   }
+  el('lostChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;lostFilter=b.getAttribute('data-sp');renderLost();});
+  el('foundChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;foundFilter=b.getAttribute('data-sp');renderFound();});
+  renderLost();renderFound();
 
-  resolveReq(id, result) {
-    this.setState(s => ({
-      vetReqs: s.vetReqs.map(r => r.id===id ? { ...r, state: result, status: result==='approved'?'Aprobada':'Rechazada' } : r)
-    }));
+  /* ---------- RENDER: shelters ---------- */
+  function capColor(pct){return pct>=100?'#DC4A4A':(pct>=80?'#F26B4E':'#0F766E');}
+  el('sheltersGrid').innerHTML=shelters.map(function(s){
+    var dpct=Math.round(s.dogN/s.dogMax*100), cpct=Math.round(s.catN/s.catMax*100);
+    var spill=s.full?'<span class="spill full">Cupo lleno</span>':'<span class="spill open">Cupo disponible</span>';
+    var sv=s.services.map(function(x){return '<span class="sv">'+x[0]+' '+x[1]+'</span>';}).join('');
+    return '<div class="shelter"><div class="top"><div><h3>'+s.name+'</h3><div class="addr">📍 '+s.addr+'</div></div>'+spill+'</div>'
+      +'<div class="bars">'
+      +'<div class="bar"><div class="brow"><b>🐕 Perros</b><span>'+s.dogN+' / '+s.dogMax+'</span></div><div class="track"><div class="fill" style="width:'+dpct+'%;background:'+capColor(dpct)+'"></div></div></div>'
+      +'<div class="bar"><div class="brow"><b>🐈 Gatos</b><span>'+s.catN+' / '+s.catMax+'</span></div><div class="track"><div class="fill" style="width:'+cpct+'%;background:'+capColor(cpct)+'"></div></div></div>'
+      +'</div><div class="svchips">'+sv+'</div>'
+      +'<button class="detail">Ver detalles y contacto</button></div>';
+  }).join('');
+
+  /* ---------- RENDER: adoptions ---------- */
+  function healthStyle(h){return h==='Sano'?['#e7f5ef','#1b7a55']:['#fdf3e7','#b5781f'];}
+  function statusColor(s){return s==='DISPONIBLE'?'#7E5BD0':(s==='EN PROCESO'?'#C58B2A':'#8a938d');}
+  function sizeIcon(s){return s==='Pequeño'?'🐾':(s==='Mediano'?'🐕':'🐕‍🦺');}
+  el('adoptGrid').innerHTML=adoptData.map(function(a,i){
+    var hs=healthStyle(a.health);
+    return '<div class="acard"><div class="photo" style="background:'+gradient(i)+'">'
+      +'<span class="pw">🐾</span><span class="sbadge" style="background:'+statusColor(a.status)+'">'+a.status+'</span>'
+      +'<span class="mono" style="position:absolute;bottom:8px;right:11px;font-size:10px">foto · adopción</span></div>'
+      +'<div class="body"><div class="title"><div class="pname">'+a.name+'</div><span class="age">'+a.age+'</span></div>'
+      +'<div class="tags"><span class="tag size">'+sizeIcon(a.size)+' '+a.size+'</span><span class="tag" style="background:'+hs[0]+';color:'+hs[1]+'">'+a.health+'</span></div>'
+      +'<div class="vetseal"><span style="font-size:14px">✅</span><span>Revisado por Veterinario</span></div>'
+      +'<button class="btn-adopt" data-tab="apply">💜 Solicitar Adopción</button></div></div>';
+  }).join('');
+
+  /* tabs */
+  function setTab(t){
+    el('tab-list').classList.toggle('active',t==='list');
+    el('tab-apply').classList.toggle('active',t==='apply');
+    el('adoptListWrap').style.display=t==='list'?'block':'none';
+    el('adoptApplyWrap').style.display=t==='apply'?'block':'none';
   }
-}
+  el('tab-list').addEventListener('click',function(){setTab('list');});
+  el('tab-apply').addEventListener('click',function(){setTab('apply');});
+
+  /* ---------- RENDER: vet dashboard ---------- */
+  var AV=[['#E3F0EE','#0F766E'],['#FBE7E0','#c4562f'],['#E7EAF4','#3a5fb0'],['#F3E8F1','#7E5BD0'],['#E6F1E9','#1b7a55']];
+  function initials(n){return n.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();}
+  function reqStyle(st){
+    if(st==='pending')return ['#fdeee9','#c4562f','Pendiente'];
+    if(st==='review')return ['#eaf0fb','#3a5fb0','En revisión'];
+    if(st==='approved')return ['#e7f5ef','#1b7a55','Aprobada'];
+    return ['#fdecec','#DC4A4A','Rechazada'];
+  }
+  function renderStats(){
+    var pending=vetReqs.filter(function(r){return r.state==='pending'||r.state==='review';}).length;
+    var stats=[
+      ['🐾',142,'Animales registrados','#E3F0EE','+12 hoy','#1b7a55'],
+      ['📥',pending,'Solicitudes pendientes','#fdeee9','Requiere acción','#c4562f'],
+      ['💜',67,'Adopciones completadas','#F3E8F1','+5 esta semana','#1b7a55'],
+      ['🏠',9,'Refugios coordinados','#E6F1E9','3 con cupo','#8a938d']
+    ];
+    el('statGrid').innerHTML=stats.map(function(s){
+      return '<div class="stat"><div class="r"><span class="ic" style="background:'+s[3]+'">'+s[0]+'</span><span class="delta" style="color:'+s[5]+'">'+s[4]+'</span></div>'
+        +'<div class="n">'+s[1]+'</div><div class="l">'+s[2]+'</div></div>';
+    }).join('');
+    el('pendPill').textContent=pending+' por revisar';
+    el('sbBadge').textContent=pending;
+  }
+  function renderReqs(){
+    el('reqRows').innerHTML=vetReqs.map(function(r,i){
+      var rs=reqStyle(r.state);
+      var actionable=r.state==='pending'||r.state==='review';
+      var av=AV[i%AV.length];
+      var acts;
+      if(actionable){
+        acts='<button class="bt-approve" data-approve="'+r.id+'">Aprobar</button>'
+          +'<button class="bt-reject" data-reject="'+r.id+'">Rechazar</button>'
+          +'<button class="bt-info">Pedir info</button>';
+      }else{
+        var lbl=r.state==='approved'?'✓ Aprobada':'✕ Rechazada';
+        acts='<span class="resolved" style="color:'+rs[1]+'">'+lbl+'</span>';
+      }
+      return '<div class="trow"><div class="who"><div class="av" style="background:'+av[0]+';color:'+av[1]+'">'+initials(r.applicant)+'</div>'
+        +'<div><b>'+r.applicant+'</b><small>'+r.city+'</small></div></div>'
+        +'<div class="animal">'+r.animal+'</div><div class="date">'+r.date+'</div>'
+        +'<div><span class="stpill" style="background:'+rs[0]+';color:'+rs[1]+'">'+rs[2]+'</span></div>'
+        +'<div class="acts">'+acts+'</div></div>';
+    }).join('');
+  }
+  el('reqRows').addEventListener('click',function(e){
+    var a=e.target.closest('[data-approve]'), r=e.target.closest('[data-reject]');
+    if(a){setReq(+a.getAttribute('data-approve'),'approved');}
+    else if(r){setReq(+r.getAttribute('data-reject'),'rejected');}
+  });
+  function setReq(id,state){
+    for(var i=0;i<vetReqs.length;i++){if(vetReqs[i].id===id){vetReqs[i].state=state;break;}}
+    renderReqs();renderStats();
+  }
+  function animalStyle(s){
+    if(s==='adopt')return ['#F3E8F1','#7E5BD0'];
+    if(s==='treat')return ['#fdf3e7','#b5781f'];
+    return ['#fdecec','#DC4A4A'];
+  }
+  el('animalsList').innerHTML=vetAnimals.map(function(a,i){
+    var st=animalStyle(a.s);
+    return '<div class="aitem"><div class="av" style="background:'+gradient(i)+'">🐾</div>'
+      +'<div><b>'+a.name+'</b><small>'+a.meta+'</small>'
+      +'<span class="st" style="background:'+st[0]+';color:'+st[1]+'">'+a.status+'</span></div></div>';
+  }).join('');
+  renderStats();renderReqs();
+
+  /* ---------- NAVIGATION ---------- */
+  function showView(name){
+    var views=document.querySelectorAll('.view');
+    for(var i=0;i<views.length;i++){views[i].classList.remove('active');}
+    var v=el('view-'+name); if(v)v.classList.add('active');
+    var links=document.querySelectorAll('.nav-link');
+    for(var j=0;j<links.length;j++){links[j].classList.toggle('active',links[j].getAttribute('data-nav')===name);}
+    var fab=el('fab');
+    if(name==='lost'||name==='found'){fab.classList.add('show');el('fabLabel').textContent=name==='found'?'Reportar Mascota Encontrada':'Reportar Mascota Perdida';fab.setAttribute('data-report',name==='found'?'encontrada':'perdida');}
+    else{fab.classList.remove('show');}
+    el('nav').classList.remove('open');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var n=e.target.closest('[data-nav]');
+    if(n){e.preventDefault();showView(n.getAttribute('data-nav'));}
+  });
+  el('menuToggle').addEventListener('click',function(){el('nav').classList.toggle('open');});
+
+  /* ---------- MODAL ---------- */
+  var STEP_LABELS=['Tipo','Animal','Ubicación','Contacto','Foto'];
+  var modalStep=1, reportType='perdida';
+  function renderStepLabels(){
+    el('stepLabels').innerHTML=STEP_LABELS.map(function(l,i){
+      return '<div class="slabel'+((i+1)<=modalStep?' done':'')+'">'+l+'</div>';
+    }).join('');
+  }
+  function setType(t){
+    reportType=t;
+    el('tcLost').classList.toggle('sel-lost',t==='perdida');
+    el('tcFound').classList.toggle('sel-found',t==='encontrada');
+  }
+  function showStep(n){
+    modalStep=n;
+    var steps=document.querySelectorAll('.mstep');
+    for(var i=0;i<steps.length;i++){steps[i].classList.toggle('active',+steps[i].getAttribute('data-step')===n);}
+    if(n<=5){
+      el('progressWrap').style.display='block';
+      el('pfill').style.width=(n/5*100)+'%';
+      renderStepLabels();
+      el('modalFoot').innerHTML='<button class="m-back" id="mBack">← Atrás</button><div class="m-count" id="mCount">Paso '+n+' de 5</div><button class="m-next" id="mNext">'+(n===5?'Enviar reporte ✓':'Siguiente →')+'</button>';
+      el('mBack').style.visibility=n===1?'hidden':'visible';
+      el('mBack').onclick=function(){showStep(Math.max(1,modalStep-1));};
+      el('mNext').onclick=function(){showStep(Math.min(6,modalStep+1));};
+    }else{
+      el('progressWrap').style.display='none';
+      el('modalFoot').innerHTML='<button class="m-back" style="flex:1" id="mHome">Ir al inicio</button><button class="m-next" style="flex:1" id="mDone">Listo</button>';
+      el('mHome').onclick=function(){closeModal();showView('home');};
+      el('mDone').onclick=closeModal;
+    }
+  }
+  function openModal(type){
+    setType(type||'perdida');
+    showStep(1);
+    el('overlay').classList.add('show');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    el('overlay').classList.remove('show');
+    document.body.style.overflow='';
+  }
+  document.addEventListener('click',function(e){
+    var r=e.target.closest('[data-report]');
+    if(r){e.preventDefault();openModal(r.getAttribute('data-report'));}
+  });
+  el('modalClose').addEventListener('click',closeModal);
+  el('overlay').addEventListener('click',function(e){if(e.target===el('overlay'))closeModal();});
+  el('tcLost').addEventListener('click',function(){setType('perdida');});
+  el('tcFound').addEventListener('click',function(){setType('encontrada');});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+  /* dropzone visual */
+  var dz=el('dropzone');
+  ['dragover','dragenter'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.add('drag');});});
+  ['dragleave','drop'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.remove('drag');});});
+
+  /* tab buttons inside adopt cards */
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-tab]');
+    if(t && t.closest('#adoptGrid')){setTab('apply');window.scrollTo({top:0,behavior:'smooth'});}
+  });
+})();
 </script>
 </body>
 </html>
