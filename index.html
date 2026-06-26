@@ -31,6 +31,17 @@ a{color:inherit}
 @keyframes sheet{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes paw{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(-6deg)}}
 @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulseDot{0%{transform:scale(1);opacity:1}50%{transform:scale(1.45);opacity:.55}100%{transform:scale(1);opacity:1}}
+
+/* ---- emergency alert banner (home) ---- */
+.alert-banner{background:#DC2626;color:#fff;padding:15px 0;border-bottom:1px solid rgba(0,0,0,.08)}
+.alert-in{max-width:1240px;margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.alert-dot{width:13px;height:13px;border-radius:50%;background:#fff;flex-shrink:0;animation:pulseDot 2s ease-in-out infinite}
+.alert-text{flex:1;min-width:220px}
+.alert-title{font-family:'Sora',sans-serif;font-weight:800;font-size:16px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.alert-sub{font-size:13.5px;color:rgba(255,255,255,.92);margin-top:5px;max-width:640px;text-wrap:pretty}
+.alert-btn{background:#fff;color:#DC2626;font-weight:700;font-size:14px;padding:12px 18px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:transform .15s;flex-shrink:0}
+.alert-btn:hover{transform:translateY(-2px)}
 
 /* ---- emergency bar ---- */
 .embar{background:var(--ink);color:#F6F1E8;font-size:13.5px;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center}
@@ -421,6 +432,8 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
   .hbtns .btn-vet{display:none}
   .vetlayout{grid-template-columns:1fr}
   .sidebar{position:static}
+  .alert-in{flex-direction:column;align-items:flex-start}
+  .alert-btn{width:100%;text-align:center}
   .hero h1{font-size:36px}
 }
 @media(max-width:520px){
@@ -468,6 +481,16 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
 
 <!-- ===================== HOME ===================== -->
 <section class="view active" id="view-home">
+  <div class="alert-banner" id="alertBanner">
+    <div class="alert-in">
+      <span class="alert-dot"></span>
+      <div class="alert-text">
+        <div class="alert-title">🚨 ALERTA ACTIVA — S.O.S. Terremoto Venezuela</div>
+        <div class="alert-sub">Plataforma activa para reunir mascotas extraviadas. Publica sin registro ni contraseña. ¡Ayúdanos a difundir!</div>
+      </div>
+      <button class="alert-btn" data-report="perdida">📣 Reportar mi mascota ahora →</button>
+    </div>
+  </div>
   <div class="hero">
     <span class="pawbg1">🐾</span><span class="pawbg2">🐾</span>
     <div class="wrap hero-grid">
@@ -692,7 +715,7 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
     <div>
       <h4>Contacto</h4>
       <div class="fcontact">
-        <span>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="47263e3223260731223322352e2926352e2834372835312229223d32222b266924282a">[email&#160;protected]</a></span>
+        <span>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e0f171b0a0f2e180b1a0b1c07000f1c07011d1e011c180b000b141b0b020f400d0103">[email&#160;protected]</a></span>
         <span>📞 0212-555-0142</span>
         <div class="socials"><span>📷</span><span>𝕏</span><span>📘</span></div>
       </div>
@@ -788,6 +811,7 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function(){
   "use strict";
+  const EMERGENCY_ACTIVE = true;
   var TINTS=[['#E3F0EE','#cfe6e2'],['#FBE7E0','#f6d3c8'],['#F1ECE0','#e5dcc9'],['#E7EAF4','#d6dcee'],['#E6F1E9','#d2e6d9'],['#F3E8F1','#e6d4e2']];
   function tint(i){return TINTS[i%TINTS.length];}
   function el(id){return document.getElementById(id);}
@@ -1033,6 +1057,9 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
       +'<span class="st" style="background:'+st[0]+';color:'+st[1]+'">'+a.status+'</span></div></div>';
   }).join('');
   renderStats();renderReqs();
+
+  /* ---------- EMERGENCY BANNER TOGGLE ---------- */
+  if(!EMERGENCY_ACTIVE){ el('alertBanner').style.display='none'; }
 
   /* ---------- NAVIGATION ---------- */
   function showView(name){
