@@ -579,6 +579,53 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
 .btn-vm-cancel:hover{background:var(--field)}
 .vm-flash{font-size:13px;font-weight:700;color:#1b7a55;display:none;align-items:center;gap:5px;margin-right:auto}
 .vm-flash.show{display:flex;animation:up .2s ease both}
+/* ── LOGIN VIEW ── */
+#view-login{min-height:calc(100vh - 68px);display:none;align-items:center;justify-content:center;padding:0}
+#view-login.active{display:flex}
+.login-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 68px);width:100%;max-width:1100px;margin:0 auto;gap:0}
+.login-card{display:flex;flex-direction:column;justify-content:center;padding:60px 56px;background:var(--bg)}
+.login-brand{display:flex;align-items:center;gap:13px;margin-bottom:40px}
+.login-logo{position:relative;width:44px;height:44px;border-radius:12px;background:var(--teal);flex-shrink:0;box-shadow:0 4px 12px rgba(15,118,110,.3)}
+.login-logo .v{position:absolute;top:50%;left:50%;width:5px;height:20px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.login-logo .h{position:absolute;top:50%;left:50%;width:20px;height:5px;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+.login-brand-name{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--head);line-height:1.15}
+.login-brand-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.login-hd{margin-bottom:28px}
+.login-hd h2{font-weight:800;font-size:26px;color:var(--head)}
+.login-hd p{color:var(--muted);font-size:15px;margin-top:6px}
+.login-error{background:#fdecec;color:#b91c1c;border:1px solid #f5c6c6;border-radius:10px;padding:11px 14px;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:18px;animation:up .2s ease both}
+.login-form{display:flex;flex-direction:column;gap:18px}
+.lf-group{display:flex;flex-direction:column;gap:6px}
+.lf-group label{font-size:13px;font-weight:700;color:var(--head);letter-spacing:.01em}
+.lf-inp{padding:12px 14px;border:1.5px solid var(--field-br);border-radius:11px;font-size:15px;background:#fff;color:var(--ink);transition:border-color .2s,box-shadow .2s;outline:none}
+.lf-inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,118,110,.1)}
+.lf-pw-wrap{position:relative}
+.lf-pw-wrap .lf-inp{width:100%;padding-right:44px}
+.lf-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:17px;opacity:.5;transition:opacity .15s;background:none;border:none;cursor:pointer;padding:2px}
+.lf-eye:hover{opacity:.8}
+.lf-hint{margin-top:-4px}
+.lf-submit{background:var(--teal);color:#fff;font-weight:700;font-size:16px;padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(15,118,110,.3);transition:.15s;margin-top:4px;letter-spacing:.01em}
+.lf-submit:hover{background:var(--teal-dk);transform:translateY(-1px);box-shadow:0 10px 24px rgba(15,118,110,.36)}
+.lf-submit:active{transform:none}
+.login-foot{margin-top:28px;text-align:center}
+.login-back{font-size:14px;color:var(--muted);font-weight:600;background:none;border:none;cursor:pointer;transition:color .15s}
+.login-back:hover{color:var(--teal)}
+/* deco panel */
+.login-deco{background:var(--head);display:flex;align-items:center;justify-content:center;padding:60px 48px;position:relative;overflow:hidden}
+.login-deco::before{content:'🐾';position:absolute;font-size:340px;opacity:.04;bottom:-60px;right:-40px;line-height:1}
+.login-deco-inner{position:relative;z-index:1;max-width:340px}
+.login-deco-paw{font-size:48px;margin-bottom:22px}
+.login-deco-inner h3{font-weight:800;font-size:26px;color:#fff;line-height:1.25;margin-bottom:14px}
+.login-deco-inner p{color:#a9d8d1;font-size:15px;line-height:1.6}
+.login-deco-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:36px;background:rgba(255,255,255,.06);border-radius:14px;padding:18px 14px}
+.login-deco-stats div{text-align:center}
+.login-deco-stats b{display:block;font-family:'Sora',sans-serif;font-weight:800;font-size:22px;color:#fff}
+.login-deco-stats span{font-size:11.5px;color:#7fb8b0;margin-top:2px;display:block;line-height:1.3}
+@media(max-width:860px){
+  .login-wrap{grid-template-columns:1fr}
+  .login-deco{display:none}
+  .login-card{padding:40px 28px}
+}
 </style>
 </head>
 <body>
@@ -990,6 +1037,75 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
       </div>
 
     </div><!-- /vetMain -->
+  </div>
+</section>
+
+
+<!-- ===================== LOGIN ===================== -->
+<section class="view" id="view-login">
+  <div class="login-wrap">
+    <div class="login-card">
+
+      <!-- Logo / brand -->
+      <div class="login-brand">
+        <div class="login-logo"><div class="v"></div><div class="h"></div></div>
+        <div>
+          <div class="login-brand-name">Veterinarios<br>por Venezuela</div>
+          <div class="login-brand-sub">Portal profesional</div>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <div class="login-hd">
+        <h2>Acceso veterinario</h2>
+        <p>Ingresa con tus credenciales para acceder al panel de gestión.</p>
+      </div>
+
+      <!-- Error banner (hidden by default) -->
+      <div class="login-error" id="loginError" style="display:none">
+        <span>⚠️</span> Credenciales incorrectas. Intenta de nuevo.
+      </div>
+
+      <!-- Form -->
+      <div class="login-form">
+        <div class="lf-group">
+          <label for="loginEmail">Correo electrónico</label>
+          <input id="loginEmail" type="email" class="lf-inp" placeholder="tu@correo.com" autocomplete="username">
+        </div>
+        <div class="lf-group">
+          <label for="loginPass">Contraseña</label>
+          <div class="lf-pw-wrap">
+            <input id="loginPass" type="password" class="lf-inp" placeholder="••••••••" autocomplete="current-password">
+            <button class="lf-eye" id="loginEye" type="button" title="Mostrar contraseña">👁</button>
+          </div>
+        </div>
+        <div class="lf-hint">
+          <span style="color:var(--muted);font-size:13px">Demo: <b>vet@vpv.com</b> / <b>demo1234</b></span>
+        </div>
+        <button class="lf-submit" id="loginSubmit">Ingresar al panel →</button>
+      </div>
+
+      <!-- Footer link -->
+      <div class="login-foot">
+        <button data-nav="home" class="login-back">← Volver al inicio</button>
+      </div>
+
+    </div>
+
+    <!-- Decorative right panel (hidden on mobile) -->
+    <div class="login-deco">
+      <div class="login-deco-inner">
+        <div class="login-deco-paw">🐾</div>
+        <h3>Red de emergencia<br>animal coordinada</h3>
+        <p>Plataforma veterinaria para la gestión de mascotas perdidas, refugios y adopciones durante desastres naturales en Venezuela.</p>
+        <div class="login-deco-stats">
+          <div><b>142</b><span>Animales registrados</span></div>
+          <div><b>9</b><span>Refugios activos</span></div>
+          <div><b>64</b><span>Veterinarios en red</span></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1721,6 +1837,7 @@ document.addEventListener('DOMContentLoaded',function(){
     el('vmSolStBadge').style.cssText='background:'+sc[0]+';color:'+sc[1];
     el('vmSolStBadge').textContent=sc[2];
     renderSol(); vmFlash('vmSolFlash');
+    setTimeout(closeVmSol, 1400);
   });
   el('vmSolClose').addEventListener('click',closeVmSol);
   el('vmSolCancel').addEventListener('click',closeVmSol);
@@ -1770,6 +1887,7 @@ document.addEventListener('DOMContentLoaded',function(){
     el('vmAnVetBadge').style.cssText='background:'+sc[0]+';color:'+sc[1];
     el('vmAnVetBadge').textContent=sc[2];
     renderAn(); vmFlash('vmAnFlash');
+    setTimeout(closeVmAn, 1400);
   });
   el('vmAnClose').addEventListener('click',closeVmAn);
   el('vmAnCancel').addEventListener('click',closeVmAn);
@@ -1818,6 +1936,7 @@ document.addEventListener('DOMContentLoaded',function(){
     el('vmReStBadge').style.cssText='background:'+sc[0]+';color:'+sc[1];
     el('vmReStBadge').textContent=sc[2];
     renderRe(); vmFlash('vmReFlash');
+    setTimeout(closeVmRe, 1400);
   });
   el('vmReClose').addEventListener('click',closeVmRe);
   el('vmReCancel').addEventListener('click',closeVmRe);
@@ -1833,7 +1952,11 @@ document.addEventListener('DOMContentLoaded',function(){
   if(!EMERGENCY_ACTIVE){ el('alertBanner').style.display='none'; }
 
   /* ---------- NAVIGATION ---------- */
+  var isLoggedIn = false;
+
   function showView(name){
+    /* "vet" always goes through login first */
+    if(name==='vet' && !isLoggedIn){ showView('login'); return; }
     var views=document.querySelectorAll('.view');
     for(var i=0;i<views.length;i++){views[i].classList.remove('active');}
     var v=el('view-'+name); if(v)v.classList.add('active');
@@ -1844,10 +1967,48 @@ document.addEventListener('DOMContentLoaded',function(){
     else{fab.classList.remove('show');}
     el('nav').classList.remove('open');
     window.scrollTo({top:0,behavior:'smooth'});
+    /* clear login form when landing on it */
+    if(name==='login'){
+      el('loginEmail').value='';
+      el('loginPass').value='';
+      el('loginError').style.display='none';
+    }
   }
   document.addEventListener('click',function(e){
     var n=e.target.closest('[data-nav]');
     if(n){e.preventDefault();showView(n.getAttribute('data-nav'));}
+  });
+
+  /* ── LOGIN LOGIC ── */
+  var DEMO_USER='vet@vpv.com', DEMO_PASS='demo1234';
+  el('loginSubmit').addEventListener('click', function(){
+    var email=el('loginEmail').value.trim();
+    var pass=el('loginPass').value;
+    if(email===DEMO_USER && pass===DEMO_PASS){
+      isLoggedIn=true;
+      el('loginError').style.display='none';
+      showView('vet');
+    } else {
+      el('loginError').style.display='flex';
+      el('loginPass').value='';
+      el('loginPass').focus();
+    }
+  });
+  /* allow Enter key to submit */
+  [el('loginEmail'),el('loginPass')].forEach(function(inp){
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')el('loginSubmit').click();});
+  });
+  /* toggle password visibility */
+  el('loginEye').addEventListener('click',function(){
+    var inp=el('loginPass');
+    inp.type=inp.type==='password'?'text':'password';
+    el('loginEye').textContent=inp.type==='password'?'👁':'🙈';
+  });
+  /* "Salir del panel" → logout → login */
+  el('view-vet').querySelector('.sb-exit').setAttribute('data-nav','login');
+  el('view-vet').querySelector('.sb-exit').addEventListener('click',function(){
+    isLoggedIn=false;
+    showView('login');
   });
   el('menuToggle').addEventListener('click',function(){el('nav').classList.toggle('open');});
 
