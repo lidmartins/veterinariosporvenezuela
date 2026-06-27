@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Veterinarios por Venezuela — Red de emergencia animal</title>
 <meta name="description" content="Plataforma de emergencia coordinada por médicos veterinarios para reunir mascotas perdidas, coordinar refugios y facilitar adopciones durante desastres naturales en Venezuela.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -846,20 +848,20 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
         <div class="sb-item">📥 Solicitudes <span class="b" id="sbBadge">5</span></div>
         <div class="sb-item">🐾 Animales</div>
         <div class="sb-item">🏠 Refugios</div>
-        <div class="sb-item">⚙️ Configuración</div>
+        <div class="sb-item" style="display:none">⚙️ Configuración</div>
       </div>
       <button class="sb-exit" data-nav="home">← Salir del panel</button>
     </aside>
     <div>
       <div class="vmain-head">
         <div><h1>Panel de control</h1><p>Jueves, 26 de junio · Emergencia activa</p></div>
-        <button class="btn-teal">+ Agregar animal</button>
+        <button class="btn-teal" data-report="perdida">+ Agregar animal</button>
       </div>
       <div class="statgrid" id="statGrid"></div>
       <div class="panel">
-        <div class="panel-head"><h3>Solicitudes de adopción pendientes</h3><span class="pill-pending" id="pendPill">5 por revisar</span></div>
+        <div class="panel-head"><h3>Mascotas perdidas reportadas</h3><span class="pill-pending" id="pendPill">5 por revisar</span></div>
         <div class="table-scroll"><div class="table">
-          <div class="trow thead"><div>Solicitante</div><div>Animal</div><div>Fecha</div><div>Estado</div><div style="text-align:right">Acciones</div></div>
+          <div class="trow thead"><div>Reportado por</div><div>Animal</div><div>Fecha</div><div>Estado</div><div style="text-align:right">Cambiar estado</div></div>
           <div id="reqRows"></div>
         </div></div>
       </div>
@@ -943,6 +945,15 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
           <div class="frow"><div><label>Raza</label><input class="inp" placeholder="Mestizo, Labrador…"></div><div><label>Color</label><input class="inp" placeholder="Marrón y blanco"></div></div>
           <div class="frow"><div><label>Tamaño</label><select class="inp"><option>Pequeño</option><option>Mediano</option><option>Grande</option></select></div><div><label>Sexo</label><select class="inp"><option>Macho</option><option>Hembra</option><option>No sé</option></select></div><div><label>Edad aprox.</label><input class="inp" placeholder="2 años"></div></div>
           <div><label>Descripción / señas particulares</label><textarea class="inp" placeholder="Collar rojo, mancha en la oreja…"></textarea></div>
+          <div style="background:#fdecec;border:1.5px solid #f5c2bc;border-radius:12px;padding:13px 15px">
+            <label class="check" style="align-items:flex-start;gap:10px">
+              <input type="checkbox" id="chkMedical" style="margin-top:2px;width:17px;height:17px;accent-color:#DC4A4A;flex-shrink:0">
+              <div>
+                <div style="font-weight:700;font-size:14px;color:#DC4A4A">🚨 El animal necesita atención médica urgente</div>
+                <div style="font-size:12.5px;color:#8a3a2c;margin-top:2px">Está herido, enfermo o en peligro inmediato. Un veterinario priorizará este caso.</div>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
       <!-- STEP 3 -->
@@ -985,6 +996,22 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
       <button class="m-back" id="mBack">← Atrás</button>
       <div class="m-count" id="mCount">Paso 1 de 5</div>
       <button class="m-next" id="mNext">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PET DETAIL MODAL ===================== -->
+<div class="overlay" id="petDetailOverlay">
+  <div class="modal" id="petDetailModal">
+    <div class="modal-head">
+      <div class="top">
+        <div class="ti"><div class="ic" id="pdIc">🐾</div><h3 id="pdTitle">Detalle del animal</h3></div>
+        <button class="x" id="pdClose">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="pdBody" style="padding-top:18px"></div>
+    <div class="modal-foot" style="justify-content:flex-end">
+      <button class="m-next" id="pdBtn" style="background:var(--teal)">Cerrar</button>
     </div>
   </div>
 </div>
@@ -1121,20 +1148,20 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
 
   /* ---------- DATA ---------- */
   var lostData=[
-    {name:'Luna',species:'Perro',sk:'perro',breed:'Mestizo mediano',location:'Maracay, Aragua',time:'hace 2 horas'},
-    {name:'Michi',species:'Gato',sk:'gato',breed:'Criollo atigrado',location:'Valencia, Carabobo',time:'hace 5 horas'},
-    {name:'Rocky',species:'Perro',sk:'perro',breed:'Labrador chocolate',location:'El Limón, Aragua',time:'hace 1 día'},
-    {name:'Pelusa',species:'Gato',sk:'gato',breed:'Siamés',location:'Petare, Caracas',time:'hace 3 horas'},
-    {name:'Max',species:'Perro',sk:'perro',breed:'Pitbull marrón',location:'Los Teques, Miranda',time:'hace 6 horas'},
-    {name:'Nina',species:'Perro',sk:'perro',breed:'Poodle blanco',location:'Maracay, Aragua',time:'hace 2 días'}
+    {name:'Luna',species:'Perro',sk:'perro',breed:'Mestizo mediano',location:'Maracay, Aragua',time:'hace 2 horas',color:'Marrón con manchas blancas en el pecho',desc:'Collar rojo sin placa. Muy cariñosa, responde a su nombre. Se perdió cerca del parque central durante el desastre.',photos:['🐕','🐾']},
+    {name:'Michi',species:'Gato',sk:'gato',breed:'Criollo atigrado',location:'Valencia, Carabobo',time:'hace 5 horas',color:'Atigrado gris y negro',desc:'Ojos verdes, muy asustadizo. Tiene una cicatriz pequeña en la oreja izquierda. Se escapó por la ventana.',photos:['🐈']},
+    {name:'Rocky',species:'Perro',sk:'perro',breed:'Labrador chocolate',location:'El Limón, Aragua',time:'hace 1 día',color:'Marrón chocolate uniforme',desc:'Talla grande, muy activo. Lleva collar negro con chapa metálica. Responde a Rocky y a silbidos.',photos:['🐕','🐾','🐕']},
+    {name:'Pelusa',species:'Gato',sk:'gato',breed:'Siamés',location:'Petare, Caracas',time:'hace 3 horas',color:'Crema con puntas oscuras en cara, orejas y patas',desc:'Ojos azules muy claros. Es castrado. Tiene microchip. Muy tranquilo, acostumbrado a vivir en interior.',photos:['🐈','🐾']},
+    {name:'Max',species:'Perro',sk:'perro',breed:'Pitbull marrón',location:'Los Teques, Miranda',time:'hace 6 horas',color:'Marrón caramelo con mancha blanca en el pecho',desc:'Talla mediana-grande. Sin collar al momento de perderse. Es muy sociable y no es agresivo.',photos:['🐕']},
+    {name:'Nina',species:'Perro',sk:'perro',breed:'Poodle blanco',location:'Maracay, Aragua',time:'hace 2 días',color:'Blanco nieve',desc:'Talla pequeña, pelo rizado largo. Collar rosa con cascabel. Tiene 4 años. Está en tratamiento veterinario para la piel.',photos:['🐕','🐾']}
   ];
   var foundData=[
-    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Mestizo marrón',location:'La Victoria, Aragua',time:'hace 1 hora',status:'En mi casa',sicon:'🏠'},
-    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Negro, ojos verdes',location:'El Limón, Aragua',time:'hace 4 horas',status:'En refugio',sicon:'🏠'},
-    {name:'Cachorro',species:'Perro',sk:'perro',breed:'Mestizo, ~3 meses',location:'Maracay, Aragua',time:'hace 7 horas',status:'En mi casa',sicon:'🏠'},
-    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Pastor, collar azul',location:'Valencia, Carabobo',time:'hace 9 horas',status:'En veterinaria',sicon:'🩺'},
-    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Atigrada gris',location:'Caracas',time:'hace 12 horas',status:'En mi casa',sicon:'🏠'},
-    {name:'Pequeño',species:'Perro',sk:'perro',breed:'Blanco pequeño',location:'Turmero, Aragua',time:'hace 1 día',status:'En refugio',sicon:'🏠'}
+    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Mestizo marrón',location:'La Victoria, Aragua',time:'hace 1 hora',status:'En mi casa',sicon:'🏠',color:'Marrón con patas claras',desc:'Macho, talla mediana. Sin collar. Asustado pero dócil. Lo encontré en la Av. Ribas corriendo solo tras las lluvias.',photos:['🐕','🐾']},
+    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Negro, ojos verdes',location:'El Limón, Aragua',time:'hace 4 horas',status:'En refugio',sicon:'🏠',color:'Negro azabache',desc:'Hembra adulta, ojos verdes brillantes. Muy asustada, no deja acercarse fácil. La encontré debajo de un carro.',photos:['🐈']},
+    {name:'Cachorro',species:'Perro',sk:'perro',breed:'Mestizo, ~3 meses',location:'Maracay, Aragua',time:'hace 7 horas',status:'En mi casa',sicon:'🏠',color:'Beige con manchas negras',desc:'Macho, aproximadamente 3 meses. Muy juguetón y sano. Estaba solo en la calle sin señales de dueño cercano.',photos:['🐕','🐾','🐕']},
+    {name:'Sin nombre',species:'Perro',sk:'perro',breed:'Pastor, collar azul',location:'Valencia, Carabobo',time:'hace 9 horas',status:'En veterinaria',sicon:'🩺',color:'Negro y marrón, marcas típicas de pastor',desc:'Macho grande, lleva collar azul sin identificación. Estaba herido en una pata trasera, ahora recibe atención veterinaria.',photos:['🐕']},
+    {name:'Sin nombre',species:'Gato',sk:'gato',breed:'Atigrada gris',location:'Caracas',time:'hace 12 horas',status:'En mi casa',sicon:'🏠',color:'Gris atigrado con blanco en el vientre',desc:'Hembra, aproximadamente 2 años. Castrada (cicatriz visible). Muy tranquila y limpia, seguro tenía dueño.',photos:['🐈','🐾']},
+    {name:'Pequeño',species:'Perro',sk:'perro',breed:'Blanco pequeño',location:'Turmero, Aragua',time:'hace 1 día',status:'En refugio',sicon:'🏠',color:'Blanco con manchita beige en la cabeza',desc:'Hembra pequeña, pelo corto. Muy nerviosa. Tiene lo que parece ser un microchip (bulto pequeño en el lomo).',photos:['🐕','🐾']}
   ];
   var shelters=[
     {name:'Refugio El Limón',addr:'El Limón, Maracay · Aragua',dogN:18,dogMax:25,catN:12,catMax:20,services:[['🍖','Comida'],['🩺','Veterinario'],['🚐','Transporte']],full:false},
@@ -1151,11 +1178,11 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
     {name:'Coco',age:'8 meses',size:'Mediano',health:'Recuperándose',status:'EN PROCESO'}
   ];
   var vetReqs=[
-    {id:1,applicant:'María González',city:'Maracay, Aragua',animal:'Canela',date:'24 jun',state:'pending'},
-    {id:2,applicant:'José Rodríguez',city:'Valencia, Carabobo',animal:'Maya',date:'23 jun',state:'pending'},
-    {id:3,applicant:'Ana Pérez',city:'Los Teques, Miranda',animal:'Nube',date:'23 jun',state:'review'},
-    {id:4,applicant:'Luis Martínez',city:'El Limón, Aragua',animal:'Simón',date:'22 jun',state:'pending'},
-    {id:5,applicant:'Carmen Díaz',city:'Caracas',animal:'Coco',date:'21 jun',state:'review'}
+    {id:1,reporter:'María González',city:'Maracay, Aragua',pet:'Luna',species:'🐕 Perro',breed:'Mestizo mediano',date:'24 jun',state:'perdido',medical:false},
+    {id:2,reporter:'José Rodríguez',city:'El Limón, Aragua',pet:'Sin nombre',species:'🐕 Perro',breed:'Mestizo marrón',date:'24 jun',state:'perdido',medical:true},
+    {id:3,reporter:'Ana Pérez',city:'Valencia, Carabobo',pet:'Michi',species:'🐈 Gato',breed:'Criollo atigrado',date:'23 jun',state:'revision',medical:false},
+    {id:4,reporter:'Luis Martínez',city:'Los Teques, Miranda',pet:'Max',species:'🐕 Perro',breed:'Pitbull marrón',date:'23 jun',state:'perdido',medical:false},
+    {id:5,reporter:'Carmen Díaz',city:'Caracas',pet:'Pelusa',species:'🐈 Gato',breed:'Siamés',date:'22 jun',state:'encontrado',medical:false}
   ];
   var features=[
     {dot:'🔴',title:'Mascotas Perdidas',desc:'Reporta y busca animales extraviados durante la emergencia.',cta:'Ver perdidas',tint:'#fdecec',accent:'#DC4A4A',nav:'lost'},
@@ -1221,14 +1248,14 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
     var badge=isLost?'<span class="badge lost">🔴 PERDIDO</span>':'<span class="badge found">🟢 ENCONTRADO</span>';
     var statusChip=isLost?'':'<span class="statuschip">'+p.sicon+' '+p.status+'</span>';
     var photoLbl='<span class="mono" style="position:absolute;bottom:8px;right:11px;font-size:10px">foto · '+p.sk+'</span>';
-    return '<div class="pet"><div class="photo" style="background:'+gradient(isLost?i:i+1)+'">'
+    return '<div class="pet pet-clickable" data-petidx="'+i+'" data-pettype="'+type+'" style="cursor:pointer"><div class="photo" style="background:'+gradient(isLost?i:i+1)+'">'
       +'<span class="pw">🐾</span>'+badge+statusChip+(isLost?photoLbl:'')+'</div>'
       +'<div class="body"><div class="title"><div class="pname">'+esc(p.name)+'</div><span class="sp">'+p.species+'</span></div>'
       +'<div class="breed">'+esc(p.breed)+'</div>'
       +'<div class="meta">📍 '+esc(p.location)+'</div>'
       +'<div class="meta t">🕒 '+p.time+'</div>'
-      +'<div class="actions"><button class="act call">📞 Llamar</button><button class="act wa">💬 WhatsApp</button></div>'
-      +'<button class="share">🔗 Compartir</button></div></div>';
+      +'<div style="margin-top:10px;font-size:12.5px;font-weight:600;color:var(--teal);display:flex;align-items:center;gap:4px">Ver más info →</div>'
+      +'</div></div>';
   }
   function chipsHTML(active){
     var defs=[['todos','Todos'],['perro','🐕 Perro'],['gato','🐈 Gato'],['otro','Otro']];
@@ -1297,17 +1324,17 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
   var AV=[['#E3F0EE','#0F766E'],['#FBE7E0','#c4562f'],['#E7EAF4','#3a5fb0'],['#F3E8F1','#7E5BD0'],['#E6F1E9','#1b7a55']];
   function initials(n){return n.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();}
   function reqStyle(st){
-    if(st==='pending')return ['#fdeee9','#c4562f','Pendiente'];
-    if(st==='review')return ['#eaf0fb','#3a5fb0','En revisión'];
-    if(st==='approved')return ['#e7f5ef','#1b7a55','Aprobada'];
-    return ['#fdecec','#DC4A4A','Rechazada'];
+    if(st==='perdido') return ['#fdecec','#DC4A4A','🔴 Perdido'];
+    if(st==='revision')return ['#eaf0fb','#3a5fb0','🔍 En revisión'];
+    if(st==='encontrado')return ['#e7f5ef','#1b7a55','🟢 Encontrado'];
+    return ['#f1f1f1','#8a938d',st];
   }
   function renderStats(){
-    var pending=vetReqs.filter(function(r){return r.state==='pending'||r.state==='review';}).length;
+    var pending=vetReqs.filter(function(r){return r.state==='perdido'||r.state==='revision';}).length;
     var stats=[
       ['🐾',142,'Animales registrados','#E3F0EE','+12 hoy','#1b7a55'],
-      ['📥',pending,'Solicitudes pendientes','#fdeee9','Requiere acción','#c4562f'],
-      ['💜',67,'Adopciones completadas','#F3E8F1','+5 esta semana','#1b7a55'],
+      ['📥',pending,'Casos pendientes','#fdeee9','Requiere acción','#c4562f'],
+      // ['💜',67,'Adopciones completadas','#F3E8F1','+5 esta semana','#1b7a55'],
       ['🏠',9,'Refugios coordinados','#E6F1E9','3 con cupo','#8a938d']
     ];
     el('statGrid').innerHTML=stats.map(function(s){
@@ -1320,28 +1347,37 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
   function renderReqs(){
     el('reqRows').innerHTML=vetReqs.map(function(r,i){
       var rs=reqStyle(r.state);
-      var actionable=r.state==='pending'||r.state==='review';
       var av=AV[i%AV.length];
-      var acts;
-      if(actionable){
-        acts='<button class="bt-approve" data-approve="'+r.id+'">Aprobar</button>'
-          +'<button class="bt-reject" data-reject="'+r.id+'">Rechazar</button>'
-          +'<button class="bt-info">Pedir info</button>';
-      }else{
-        var lbl=r.state==='approved'?'✓ Aprobada':'✕ Rechazada';
-        acts='<span class="resolved" style="color:'+rs[1]+'">'+lbl+'</span>';
+      var medBadge=r.medical?'<span style="background:#fdecec;color:#DC4A4A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px">🚨 Urgente</span>':'';
+      /* Quick-status buttons */
+      var acts='';
+      if(r.state!=='encontrado'){
+        if(r.state==='perdido'){
+          acts='<button class="bt-approve" data-setstate="'+r.id+'" data-next="revision" title="Poner en revisión">🔍 Revisar</button>';
+        }
+        if(r.state==='perdido'||r.state==='revision'){
+          acts+='<button class="bt-approve" data-setstate="'+r.id+'" data-next="encontrado" title="Marcar como encontrado" style="background:#e7f5ef;color:#1b7a55;border:1.5px solid #b6e0cb">✅ Encontrado</button>';
+        }
+      } else {
+        acts='<span class="resolved" style="color:#1b7a55">✓ Encontrado</span>';
       }
-      return '<div class="trow"><div class="who"><div class="av" style="background:'+av[0]+';color:'+av[1]+'">'+initials(r.applicant)+'</div>'
-        +'<div><b>'+r.applicant+'</b><small>'+r.city+'</small></div></div>'
-        +'<div class="animal">'+r.animal+'</div><div class="date">'+r.date+'</div>'
+      return '<div class="trow">'
+        +'<div class="who"><div class="av" style="background:'+av[0]+';color:'+av[1]+'">'+initials(r.reporter)+'</div>'
+        +'<div><b>'+r.reporter+'</b><small>'+r.city+'</small></div></div>'
+        +'<div class="animal"><b>'+r.pet+'</b><small style="display:block;color:var(--muted)">'+r.species+' · '+r.breed+'</small>'+medBadge+'</div>'
+        +'<div class="date">'+r.date+'</div>'
         +'<div><span class="stpill" style="background:'+rs[0]+';color:'+rs[1]+'">'+rs[2]+'</span></div>'
         +'<div class="acts">'+acts+'</div></div>';
     }).join('');
   }
   el('reqRows').addEventListener('click',function(e){
-    var a=e.target.closest('[data-approve]'), r=e.target.closest('[data-reject]');
-    if(a){setReq(+a.getAttribute('data-approve'),'approved');}
-    else if(r){setReq(+r.getAttribute('data-reject'),'rejected');}
+    var btn=e.target.closest('[data-setstate]');
+    if(btn){
+      var id=+btn.getAttribute('data-setstate');
+      var next=btn.getAttribute('data-next');
+      for(var i=0;i<vetReqs.length;i++){if(vetReqs[i].id===id){vetReqs[i].state=next;break;}}
+      renderReqs();renderStats();
+    }
   });
   function setReq(id,state){
     for(var i=0;i<vetReqs.length;i++){if(vetReqs[i].id===id){vetReqs[i].state=state;break;}}
@@ -1444,6 +1480,86 @@ footer{background:#10312d;color:#cfe0db;margin-top:auto}
     var t=e.target.closest('[data-tab]');
     if(t && t.closest('#adoptGrid')){setTab('apply');window.scrollTo({top:0,behavior:'smooth'});}
   });
+
+  /* ========== PET DETAIL MODAL ========== */
+  function openPetDetail(petData, type){
+    var isLost = type === 'lost';
+    var p = petData;
+    var badgeColor = isLost ? 'var(--lost)' : 'var(--found)';
+    var badgeTxt   = isLost ? '🔴 PERDIDO' : '🟢 ENCONTRADO';
+    var statusHtml = (!isLost && p.status)
+      ? '<span style="background:#e7f5ef;color:#2F9E63;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:700">'+p.sicon+' '+p.status+'</span>'
+      : '';
+
+    // photos carousel (emojis as placeholder tiles)
+    var photos = p.photos || ['🐾'];
+    var photoTiles = photos.map(function(em,i){
+      var tints = [['#E3F0EE','#cfe6e2'],['#FBE7E0','#f6d3c8'],['#F1ECE0','#e5dcc9']];
+      var t = tints[i % tints.length];
+      return '<div style="flex:1;min-width:90px;max-width:150px;height:110px;border-radius:13px;background:linear-gradient(140deg,'+t[0]+','+t[1]+');display:flex;align-items:center;justify-content:center;font-size:44px">'+em+'</div>';
+    }).join('');
+
+    // info rows helper
+    function row(icon, label, val){
+      if(!val) return '';
+      return '<div style="display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);align-items:flex-start">'
+        +'<span style="font-size:17px;flex-shrink:0;margin-top:1px">'+icon+'</span>'
+        +'<div><div style="font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">'+label+'</div>'
+        +'<div style="font-size:14.5px;color:var(--ink)">'+val+'</div></div></div>';
+    }
+
+    el('pdIc').textContent = p.sk === 'gato' ? '🐈' : '🐕';
+    el('pdTitle').textContent = p.name || 'Sin nombre';
+
+    el('pdBody').innerHTML =
+      // Badge + status
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">'
+        +'<span style="background:'+badgeColor+';color:#fff;padding:4px 11px;border-radius:20px;font-size:12.5px;font-weight:700">'+badgeTxt+'</span>'
+        +statusHtml
+      +'</div>'
+      // Photo strip
+      +'<div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px">'+photoTiles+'</div>'
+      // Info table
+      +'<div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:2px 16px">'
+        +row('🐾','Especie',p.species)
+        +row('📋','Raza',p.breed)
+        +row('🎨','Color / pelaje',p.color)
+        +row('📍','Última ubicación',p.location)
+        +row('🕒','Reportado',p.time)
+        +row('📝','Descripción / señas particulares',p.desc)
+      +'</div>';
+
+    el('petDetailOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePetDetail(){
+    el('petDetailOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  el('pdClose').addEventListener('click', closePetDetail);
+  el('pdBtn').addEventListener('click', closePetDetail);
+  el('petDetailOverlay').addEventListener('click', function(e){
+    if(e.target === el('petDetailOverlay')) closePetDetail();
+  });
+
+  // Click on any pet card
+  document.addEventListener('click', function(e){
+    var card = e.target.closest('.pet-clickable');
+    if(!card) return;
+    var idx  = parseInt(card.getAttribute('data-petidx'), 10);
+    var type = card.getAttribute('data-pettype');
+    var arr  = type === 'lost' ? lostData : foundData;
+    // find the actual item — filtered lists use original index encoded in data-petidx
+    // we stored the map index so we need to rebuild the filtered list
+    var list = type === 'lost'
+      ? (lostFilter  === 'todos' ? lostData  : lostData.filter(function(p){return p.sk===lostFilter;}))
+      : (foundFilter === 'todos' ? foundData : foundData.filter(function(p){return p.sk===foundFilter;}));
+    var pet = list[idx];
+    if(pet) openPetDetail(pet, type);
+  });
+
   /* ========== SHELTER MODAL ========== */
   var sStep = 1;
   var S_LABELS = ['Contacto','Ubicación','Animales','Condiciones'];
